@@ -1,20 +1,23 @@
 ## SushiSwap?
 * [The SushiSwap project](https://medium.com/sushiswap/the-sushiswap-project-c4049ea9941e)
-* [sushiswap](sushiswap.org)
+* [sushiswap](https://sushiswap.org)
 
 ## SushiView
-SushiView is built for me, based on my experience using Uniswap. It may not be for you but I hope you find it useful.
 
 Just like how SushiSwap is an evolution in Uniswaps protocol design, SushiView is trying to be an evolution is user-experience for DEX.
 
-The current user-experience of Dex's are still no match for centralized exchanges like Binance, Coinbase. Uniswap currently is built like lego's, users are expected to use different services like swap/pool on app.uniswap.org, analytics on uniswap.info, maybe manage portfolio on zapper.fi etc. In a typical CeFi, all these are integrated.
+The current user-experience of Dex's are still no match for centralized exchanges like Binance, Coinbase. 
 
-SushiView should be [omakase](https://dhh.dk/2012/rails-is-omakase.html).
+Uniswap currently is built like lego's, users are expected to use different services like swap/pool on app.uniswap.org, analytics on uniswap.info, maybe manage portfolio on zapper.fi etc. In a typical CeFi, all these are integrated.
+
+SushiView is built for me, based on my experience using Uniswap. It may not be for you but I hope you find it useful.
+
+SushiView will be [omakase](https://dhh.dk/2012/rails-is-omakase.html).
 
 ## Planned Features
 
 ### TradingView
-* Historical for token liquidity/volume - like uniswap.info
+* Historical data for token liquidity/volume - like uniswap.info
 * Wallet/portfolio with performance
 * Swap history
 

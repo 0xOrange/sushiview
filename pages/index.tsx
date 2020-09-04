@@ -1,7 +1,13 @@
-const Home = () => (
-    <div className="w-full">
-        <p className="p-2 bg-gray-100">SushiView</p>
-    </div>
-)
+import Container from '../components/container'
+import Header from '../components/header'
 
-export default Home
+const Home = () => (
+  <>
+    <Header />
+    <Container dottedBG>
+      <p>Welcome to SushiView.</p>
+    </Container>
+  </>
+);
+
+export default Home;
