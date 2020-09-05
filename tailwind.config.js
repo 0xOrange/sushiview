@@ -1,14 +1,14 @@
 module.exports = {
-  purge: ["./src/**/*.html", "./src/**/*.tsx", "./src/**/*.jsx"],
+  purge: ['./pages/**/*.{js,jsx,ts,tsx}', './components/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {},
   },
   variants: {
-    padding: ["first"],
-    borderColor: ["hover"],
+    padding: ['first'],
+    borderColor: ['hover'],
   },
   plugins: [],
   future: {
     removeDeprecatedGapUtilities: true,
   },
-};
+}
