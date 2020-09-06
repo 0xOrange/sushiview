@@ -3,7 +3,6 @@ import { ResponsiveContainer } from 'recharts'
 import { TimeFrame } from '../../constants'
 import TradingViewChart, { ChartType } from './tradingView'
 import { getTimeframe } from '../../utils'
-import { global_chart, global_data } from './mock'
 
 enum ChartView {
   VOLUME,
@@ -17,17 +16,12 @@ enum VolumeWindow {
 
 interface GlobalChart {
   display: 'volume' | 'liquidity'
+  globalData: any
+  globalChart: any
 }
-const GlobalChart = ({ display }: GlobalChart) => {
-  // chart options
-  const [chartView] = useState(display === 'volume' ? ChartView.VOLUME : ChartView.LIQUIDITY)
-
-  // time window and window size for chart
-  const timeWindow = TimeFrame.ALL_TIME
-  const [volumeWindow] = useState(VolumeWindow.DAYS)
-
+const GlobalChart = ({ display, globalChart, globalData }: GlobalChart) => {
   // global historical data
-  const [dailyData, weeklyData] = global_chart
+  const [dailyData, weeklyData] = globalChart
   const {
     totalLiquidityUSD,
     oneDayVolumeUSD,
@@ -35,7 +29,13 @@ const GlobalChart = ({ display }: GlobalChart) => {
     liquidityChangeUSD,
     oneWeekVolume,
     weeklyVolumeChange,
-  } = global_data
+  } = globalData
+
+  // chart options
+  const [chartView] = useState(display === 'volume' ? ChartView.VOLUME : ChartView.LIQUIDITY)
+  // time window and window size for chart
+  const timeWindow = TimeFrame.ALL_TIME
+  const [volumeWindow] = useState(VolumeWindow.DAYS)
 
   // based on window, get starttim
   const utcStartTime = getTimeframe(timeWindow)

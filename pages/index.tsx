@@ -2,39 +2,57 @@ import React from 'react'
 import Container from '../components/container'
 import Header from '../components/header'
 import dynamic from 'next/dynamic'
-import cn from 'classnames'
+import { Button, Panel, Dominance } from '../components/app'
+
+import { global_chart, global_data } from '../components/charts/mock'
 const GlobalChart = dynamic(() => import('../components/charts/globalChart'), {
   ssr: false,
 })
 
-interface Panel {
-  className?: string
-  children: JSX.Element | JSX.Element[]
+const Home = () => {
+  return (
+    <>
+      <Header />
+      <Container dottedBG className="py-6">
+        <div className="flex flex-col md:flex-row">
+          <div className="flex flex-col flex-1 justify-center md:order-1 max-w-xl first:ml-12 w-full">
+            <img src="/sushi-plate.svg" alt="Sushi plate" />
+            <div className="absolute self-center flex flex-col -mt-24">
+              <p className="text-5xl text-gray-800 text-center w-full">
+                <span className="text-3xl pb-12 text-gray-600">$</span>3.02
+              </p>
+              <div className="flex justify-between mt-4 ml-6">
+                {['🍣  20,000,000', '🍴 100 sushi/hr'].map((t, key) => (
+                  <div
+                    className="h-8 rounded-lg bg-gray-200 flex justify-center items-center text-gray-600 px-2 text-sm first:mr-4"
+                    key={key}
+                  >
+                    {t}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-center mt-4">
+              <Button type="primary">
+                <>
+                  <span className="text-lg mr-3">👩‍🍳</span>Earn
+                </>
+              </Button>
+              <Button type="secondary">
+                <>
+                  <span className="text-lg mr-3">🍣</span>Trade
+                </>
+              </Button>
+            </div>
+          </div>
+          <Panel className="flex-1 max-w-xl mt-2">
+            <GlobalChart display="volume" globalChart={global_chart} globalData={global_data} />
+            <Dominance sushiPercent={0.7} className="-ml-2 mt-8" />
+          </Panel>
+        </div>
+      </Container>
+    </>
+  )
 }
-const Panel = ({ className, children }: Panel) => (
-  <>
-    <div className={cn(className, 'panel border-gray-200 border-2 rounded-lg py-4 pl-4 bg-white shadow-md')}>
-      {children}
-    </div>
-    <style jsx>{`
-      .panel {
-        min-height: 300px;
-      }
-    `}</style>
-  </>
-)
-const Home = () => (
-  <>
-    <Header />
-    <Container dottedBG>
-      <div className="flex flex-col md:flex-row">
-        <div className="flex-1 md:order-1">Sushi plate</div>
-        <Panel className="flex-1 max-w-xl">
-          <GlobalChart display="liquidity" />
-        </Panel>
-      </div>
-    </Container>
-  </>
-)
 
 export default Home

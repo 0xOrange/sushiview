@@ -24,7 +24,7 @@ const NavItem = ({
 }) => (
   <Link href={href}>
     <a
-      className={cn('text-gray-500 hover:text-gray-700 px-4 py-2 first:px-0 no-underline text-lg', {
+      className={cn('text-gray-600 hover:text-orange-500 px-4 py-2 first:px-0 no-underline text-md font-semibold', {
         'text-orange-500 hover:text-orange-500': selected,
       })}
       title={title}
