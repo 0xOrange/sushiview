@@ -6,8 +6,8 @@ import { useRouter } from 'next/router'
 
 const Logo = () => (
   <>
-    <img src="/sushiview-logo.svg" className="mr-12 hidden md:block md:ml-6 min-w-32 w-32 mt-px" />
-    <p className="text-3xl md:hidden px-6 h-full text-center">🍣</p>
+    <img src="/sushiview-logo.svg" className="mr-12 hidden md:block min-w-32 w-32 mt-px" />
+    <p className="text-3xl md:hidden h-full text-center">🍣</p>
   </>
 )
 
@@ -38,7 +38,7 @@ const Nav = () => {
   const { route } = useRouter()
 
   return (
-    <nav className="max-w-5xl w-screen flex space-between items-center">
+    <nav className="max-w-6xl px-6 w-screen flex space-between items-center">
       <div className="flex flex-1 items-center">
         <NavItem title="SushiView Home" href="/">
           <Logo />
@@ -54,7 +54,7 @@ const Nav = () => {
         </NavItem>
       </div>
 
-      <button className="hidden md:block md:mr-6 outline-none border-solid border-2 border-gray-600 rounded-lg h-10 px-2 hover:bg-orange-500 hover:border-orange-500 hover:text-white focus:outline-none">
+      <button className="hidden md:block outline-none border-solid border-2 border-gray-600 rounded-lg h-10 px-2 hover:bg-orange-500 hover:border-orange-500 hover:text-white focus:outline-none">
         My Account
       </button>
     </nav>
