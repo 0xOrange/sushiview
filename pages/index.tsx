@@ -45,10 +45,12 @@ const Home = () => {
               </Button>
             </div>
           </div>
-          <Panel className="flex-1 max-w-xl mt-2">
-            <GlobalChart display="volume" globalChart={global_chart} globalData={global_data} />
-            <Dominance sushiPercent={0.7} className="-ml-2 mt-8" />
-          </Panel>
+          <div className="flex-1 max-w-xl">
+            <Dominance sushiPercent={0.7} />
+            <Panel className="mt-4  border-2 border-orange-100">
+              <GlobalChart display="volume" globalChart={global_chart} globalData={global_data} />
+            </Panel>
+          </div>
         </div>
       </Container>
     </>

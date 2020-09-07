@@ -18,8 +18,9 @@ interface GlobalChart {
   display: 'volume' | 'liquidity'
   globalData: any
   globalChart: any
+  className?: string
 }
-const GlobalChart = ({ display, globalChart, globalData }: GlobalChart) => {
+const GlobalChart = ({ display, globalChart, globalData, className }: GlobalChart) => {
   // global historical data
   const [dailyData, weeklyData] = globalChart
   const {
@@ -76,7 +77,7 @@ const GlobalChart = ({ display, globalChart, globalData }: GlobalChart) => {
   }, [isClient, width]) // Empty array ensures that effect is only run on mount and unmount
 
   return (
-    <>
+    <div className={className}>
       {chartDataFiltered && chartView === ChartView.LIQUIDITY && (
         <ResponsiveContainer aspect={60 / 28} ref={ref}>
           <TradingViewChart
@@ -105,7 +106,7 @@ const GlobalChart = ({ display, globalChart, globalData }: GlobalChart) => {
         </ResponsiveContainer>
       )}
       {!chartDataFiltered && <></>}
-    </>
+    </div>
   )
 }
 

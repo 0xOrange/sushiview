@@ -13,6 +13,7 @@ export const Panel = ({ className, children }: Panel) => (
     <style jsx>{`
       .panel {
         height: 332px;
+        min-height: 332px;
       }
     `}</style>
   </>
@@ -39,11 +40,13 @@ interface Dominance {
   className?: string
 }
 export const Dominance = ({ sushiPercent, className }: Dominance) => (
-  <div className={cn('flex w-full h-6', className)}>
-    <div className="sushi text-center rounded-l-lg bg-orange-500 text-white border-r-2 border-gray-100 text-sm">
+  <div className={cn('flex w-full h-4', className)}>
+    <div className="sushi text-center rounded-l-lg bg-orange-500 text-white border-r-2 border-gray-100 text-xs leading-4">
       sushiswap ({(sushiPercent * 100).toFixed(0)}%)
     </div>
-    <div className="uni text-center rounded-r-lg text-white" />
+    <div className="uni text-center rounded-r-lg text-white text-xs leading-4">
+      uniswap ({((1 - sushiPercent) * 100).toFixed(0)}%)
+    </div>
     <style jsx>{`
       .sushi {
         flex: 1;
