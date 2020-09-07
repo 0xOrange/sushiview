@@ -26,7 +26,7 @@ interface Button {
 export const Button = ({ type = 'primary', children }: Button) => (
   <button
     className={cn(
-      'h-12 w-48 rounded-lg flex justify-center items-center text-md font-bold first:mr-10 shadow-lg focus:outline-none transform hover:scale-105',
+      'h-10 w-48 rounded-lg flex justify-center items-center text-md font-bold first:mr-8 shadow-lg focus:outline-none transform hover:scale-105',
       { 'bg-orange-500  text-white': type === 'primary' },
       { 'bg-gray-200  text-gray-700': type === 'secondary' },
     )}
@@ -41,10 +41,10 @@ interface Dominance {
 }
 export const Dominance = ({ sushiPercent, className }: Dominance) => (
   <div className={cn('flex w-full h-4', className)}>
-    <div className="sushi text-center rounded-l-lg bg-orange-500 text-white border-r-2 border-gray-100 text-xs leading-4">
+    <div className="sushi text-center rounded-l-lg bg-orange-500 text-white text-xs leading-4">
       sushiswap ({(sushiPercent * 100).toFixed(0)}%)
     </div>
-    <div className="uni text-center rounded-r-lg text-white text-xs leading-4">
+    <div className="uni text-center rounded-r-lg text-xs leading-4 bg-gray-200 text-gray-600">
       uniswap ({((1 - sushiPercent) * 100).toFixed(0)}%)
     </div>
     <style jsx>{`
@@ -54,7 +54,6 @@ export const Dominance = ({ sushiPercent, className }: Dominance) => (
       }
       .uni {
         flex: ${1 - sushiPercent};
-        background-color: #eb357b;
       }
     `}</style>
   </div>

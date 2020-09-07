@@ -3,26 +3,41 @@ import Container from '../components/container'
 import Header from '../components/header'
 import dynamic from 'next/dynamic'
 import { Button, Panel, Dominance } from '../components/app'
+import { formattedNum, toK } from '../utils'
 
 import { global_chart, global_data } from '../components/charts/mock'
+import next from 'next'
 const GlobalChart = dynamic(() => import('../components/charts/globalChart'), {
   ssr: false,
 })
 
 const Home = () => {
+  const sushiData = {
+    balance: null,
+    supply: 2_011_1111,
+    valueUsd: 3.02,
+  }
+  const nextSushiPercent = sushiData.balance - Math.floor(sushiData.balance)
   return (
     <>
       <Header />
       <Container dottedBG className="py-6">
-        <div className="flex flex-col md:flex-row">
-          <div className="flex flex-col flex-1 justify-center md:order-1 max-w-xl first:ml-12 w-full">
+        <div className="flex flex-col lg:flex-row items-center">
+          <div className="flex flex-col flex-1 justify-center lg:order-1 max-w-xl first:ml-12 w-full">
             <img src="/sushi-plate.svg" alt="Sushi plate" />
             <div className="absolute self-center flex flex-col -mt-24">
-              <p className="text-5xl text-gray-800 text-center w-full">
-                <span className="text-3xl pb-12 text-gray-600">$</span>3.02
-              </p>
-              <div className="flex justify-between mt-4 ml-6">
-                {['🍣  20,000,000', '🍴 100 sushi/hr'].map((t, key) => (
+              <div className="pl-5 flex flex-col items-center w-full">
+                {sushiData.balance != null && (
+                  <div className="text-5xl">{formattedNum(Math.floor(sushiData.balance))}</div>
+                )}
+                {sushiData.balance == null && <div className="text-5xl w-full text-center">🍣</div>}
+                <div className="w-32 flex">
+                  <div className="bg-orange-500 h-1 rounded-l-full" style={{ flex: nextSushiPercent }} />
+                  <div className="bg-gray-400 h-1 rounded-r-full" style={{ flex: 1 - nextSushiPercent }} />
+                </div>
+              </div>
+              <div className="flex justify-center mt-4 ml-6">
+                {[`💲${sushiData.valueUsd}`, `📊 ${toK(sushiData.supply)}`].map((t, key) => (
                   <div
                     className="h-8 rounded-lg bg-gray-200 flex justify-center items-center text-gray-600 px-2 text-sm first:mr-4"
                     key={key}
@@ -47,7 +62,7 @@ const Home = () => {
           </div>
           <div className="flex-1 max-w-xl">
             <Dominance sushiPercent={0.7} />
-            <Panel className="mt-4  border-2 border-orange-100">
+            <Panel className="mt-4  border-2 border-gray-200">
               <GlobalChart display="volume" globalChart={global_chart} globalData={global_data} />
             </Panel>
           </div>
