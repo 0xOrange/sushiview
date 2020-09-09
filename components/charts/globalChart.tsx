@@ -3,6 +3,8 @@ import { ResponsiveContainer } from 'recharts'
 import { TimeFrame } from '../../constants'
 import TradingViewChart, { ChartType } from './tradingView'
 import { getTimeframe } from '../../utils'
+import { useGlobalChartData, useGlobalData } from '../../contexts/globalData'
+import { Spinner } from '../../components/app'
 
 enum ChartView {
   VOLUME,
@@ -16,13 +18,11 @@ enum VolumeWindow {
 
 interface GlobalChart {
   display: 'volume' | 'liquidity'
-  globalData: any
-  globalChart: any
   className?: string
 }
-const GlobalChart = ({ display, globalChart, globalData, className }: GlobalChart) => {
+const GlobalChart = ({ display, className }: GlobalChart) => {
   // global historical data
-  const [dailyData, weeklyData] = globalChart
+  const [dailyData, weeklyData] = useGlobalChartData()
   const {
     totalLiquidityUSD,
     oneDayVolumeUSD,
@@ -30,8 +30,7 @@ const GlobalChart = ({ display, globalChart, globalData, className }: GlobalChar
     liquidityChangeUSD,
     oneWeekVolume,
     weeklyVolumeChange,
-  } = globalData
-
+  } = useGlobalData()
   // chart options
   const [chartView] = useState(display === 'volume' ? ChartView.VOLUME : ChartView.LIQUIDITY)
   // time window and window size for chart
@@ -76,6 +75,14 @@ const GlobalChart = ({ display, globalChart, globalData, className }: GlobalChar
     return () => window.removeEventListener('resize', handleResize)
   }, [isClient, width]) // Empty array ensures that effect is only run on mount and unmount
 
+  if (totalLiquidityUSD == null) {
+    return (
+      <div className="w-full h-full flex justify-center items-center -ml-2">
+        <Spinner />
+      </div>
+    )
+  }
+
   return (
     <div className={className}>
       {chartDataFiltered && chartView === ChartView.LIQUIDITY && (
@@ -84,7 +91,7 @@ const GlobalChart = ({ display, globalChart, globalData, className }: GlobalChar
             data={dailyData}
             base={totalLiquidityUSD}
             baseChange={liquidityChangeUSD}
-            title="Liquidity"
+            title="Sushiswap Liquidity"
             field="totalLiquidityUSD"
             width={width}
             type={ChartType.AREA}

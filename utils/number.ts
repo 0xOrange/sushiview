@@ -1,24 +1,7 @@
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { TimeFrame } from '../constants'
 import Numeral from 'numeral'
-
 dayjs.extend(utc)
-
-export function getTimeframe(timeWindow) {
-  const utcEndTime = dayjs.utc()
-  // based on window, get starttime
-  switch (timeWindow) {
-    case TimeFrame.WEEK:
-      return utcEndTime.subtract(1, 'week').endOf('day').unix() - 1
-    case TimeFrame.MONTH:
-      return utcEndTime.subtract(1, 'month').endOf('day').unix() - 1
-    case TimeFrame.ALL_TIME:
-      return utcEndTime.subtract(1, 'year').endOf('day').unix() - 1
-    default:
-      return utcEndTime.subtract(1, 'year').startOf('year').unix() - 1
-  }
-}
 
 // using a currency library here in case we want to add more in future
 const priceFormatter = new Intl.NumberFormat('en-US', {
@@ -83,7 +66,7 @@ export const get2DayPercentChange = (valueNow: number, value24HoursAgo: number, 
 
 // get standard percent change between two values
 export const getPercentChange = (valueNow: number, value24HoursAgo: number) => {
-  const adjustedPercentChange = (valueNow - value24HoursAgo / value24HoursAgo) * 100
+  const adjustedPercentChange = ((valueNow - value24HoursAgo) / value24HoursAgo) * 100
   if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
     return 0
   }

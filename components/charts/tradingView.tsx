@@ -126,7 +126,7 @@ const TradingViewChart = ({
           },
         },
         localization: {
-          priceFormatter: (val) => formattedNum(val, true),
+          priceFormatter: (val: number) => formattedNum(val, true),
         },
       })
 

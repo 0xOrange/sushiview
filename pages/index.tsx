@@ -2,11 +2,9 @@ import React from 'react'
 import Container from '../components/container'
 import Header from '../components/header'
 import dynamic from 'next/dynamic'
-import { Button, Panel, Dominance } from '../components/app'
+import { Button, Panel } from '../components/app'
 import { formattedNum, toK } from '../utils'
 
-import { global_chart, global_data } from '../components/charts/mock'
-import next from 'next'
 const GlobalChart = dynamic(() => import('../components/charts/globalChart'), {
   ssr: false,
 })
@@ -60,10 +58,9 @@ const Home = () => {
               </Button>
             </div>
           </div>
-          <div className="flex-1 max-w-xl">
-            <Dominance sushiPercent={0.7} />
+          <div className="flex-1 max-w-xl min-w-full lg:min-w-0">
             <Panel className="mt-4  border-2 border-gray-200">
-              <GlobalChart display="volume" globalChart={global_chart} globalData={global_data} />
+              <GlobalChart display="liquidity" />
             </Panel>
           </div>
         </div>
