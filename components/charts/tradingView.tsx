@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { formattedNum } from '../../utils'
 import { usePrevious } from 'react-use'
+import { ExchangeSource } from '../../constants'
 
 dayjs.extend(utc)
 
@@ -15,6 +16,11 @@ export enum ChartType {
 // constant height for charts
 const HEIGHT = 300
 
+const lineColor: Record<ExchangeSource, string> = {
+  [ExchangeSource.UNISWAP]: '#ff007a',
+  [ExchangeSource.SUSHISWAP]: '#fa7814',
+}
+
 interface TradingViewCharts {
   type: ChartType
   data: any
@@ -24,10 +30,12 @@ interface TradingViewCharts {
   title: string
   width: number
   useWeekly?: boolean
+  exchangeSource: ExchangeSource
 }
 
 const TradingViewChart = ({
   type = ChartType.BAR,
+  exchangeSource = ExchangeSource.SUSHISWAP,
   data,
   base,
   baseChange,
@@ -133,7 +141,7 @@ const TradingViewChart = ({
       const series =
         type === ChartType.BAR
           ? chart.addHistogramSeries({
-              color: '#fa7814',
+              color: lineColor[exchangeSource],
               priceFormat: {
                 type: 'volume',
               },
@@ -143,9 +151,9 @@ const TradingViewChart = ({
               },
             })
           : chart.addAreaSeries({
-              topColor: '#fa7814',
-              bottomColor: '#fa781455',
-              lineColor: '#fa7814',
+              topColor: lineColor[exchangeSource],
+              bottomColor: `${lineColor[exchangeSource]}55`,
+              lineColor: lineColor[exchangeSource],
               lineWidth: 3,
             })
 

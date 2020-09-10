@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { BUNDLE_ID, SUSHI_FACTORY_ADDRESS } from '../constants'
+import { BUNDLE_ID } from '../constants'
 
 export const GET_BLOCK = gql`
   query blocks($timestampFrom: Int!, $timestampTo: Int!) {
@@ -30,11 +30,11 @@ export const GLOBAL_CHART = gql`
   }
 `
 
-export const GLOBAL_DATA = (block?: number) => {
+export const GLOBAL_DATA = (factoryAddress: string, block?: number) => {
   const queryString = ` query uniswapFactories {
       uniswapFactories(
        ${block ? `block: { number: ${block}}` : ``} 
-       where: { id: "${SUSHI_FACTORY_ADDRESS}" }) {
+       where: { id: "${factoryAddress}" }) {
         id
         totalVolumeUSD
         totalVolumeETH

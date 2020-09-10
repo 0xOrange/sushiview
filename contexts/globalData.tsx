@@ -7,11 +7,13 @@ import {
   get2DayPercentChange,
   getBlocksFromTimestamps,
 } from '../utils'
-import { sushiClient } from '../gql/client'
+import { exchangeClient } from '../gql/client'
 import { ETH_PRICE, GLOBAL_CHART, GLOBAL_DATA } from '../gql/queries'
 import { useTimeframe } from './application'
 import utc from 'dayjs/plugin/utc'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
+import { ExchangeSource, factoryAddress } from '../constants'
+import _get from 'lodash/get'
 dayjs.extend(utc)
 dayjs.extend(weekOfYear)
 
@@ -21,15 +23,16 @@ function useGlobalDataContext() {
   return useContext(GlobalDataContext)
 }
 
-export function useEthPrice() {
+export function useEthPrice(exchangeSource: ExchangeSource) {
   const [state, { updateEthPrice }] = useGlobalDataContext()
-  const ethPrice = state?.[ETH_PRICE_KEY]
-  const ethPriceOld = state?.['oneDayPrice']
+  const ethPrice = _get(state, `${exchangeSource}.${ETH_PRICE_KEY}`, null)
+  const ethPriceOld = _get(state, `${exchangeSource}.oneDayPrice`, null)
+
   useEffect(() => {
     async function checkForEthPrice() {
       if (!ethPrice) {
-        const [newPrice, oneDayPrice, priceChange] = await getEthPrice()
-        updateEthPrice(newPrice, oneDayPrice, priceChange)
+        const [newPrice, oneDayPrice, priceChange] = await getEthPrice(exchangeSource)
+        updateEthPrice(exchangeSource, newPrice, oneDayPrice, priceChange)
       }
     }
     checkForEthPrice()
@@ -38,7 +41,8 @@ export function useEthPrice() {
   return [ethPrice, ethPriceOld]
 }
 
-const getEthPrice = async () => {
+const getEthPrice = async (exchangeSource: ExchangeSource) => {
+  const client = exchangeClient[exchangeSource]
   const utcCurrentTime = dayjs()
   const utcOneDayBack = utcCurrentTime.subtract(1, 'day').startOf('minute').unix()
 
@@ -48,11 +52,11 @@ const getEthPrice = async () => {
 
   try {
     const oneDayBlock = await getBlockFromTimestamp(utcOneDayBack)
-    const result = await sushiClient.query({
+    const result = await client.query({
       query: ETH_PRICE(),
       fetchPolicy: 'cache-first',
     })
-    const resultOneDay = await sushiClient.query({
+    const resultOneDay = await client.query({
       query: ETH_PRICE(oneDayBlock),
       fetchPolicy: 'cache-first',
     })
@@ -68,65 +72,15 @@ const getEthPrice = async () => {
   return [ethPrice, ethPriceOneDay, priceChangeETH]
 }
 
-const UPDATE = 'UPDATE'
-const UPDATE_CHART = 'UPDATE_CHART'
-const UPDATE_ETH_PRICE = 'UPDATE_ETH_PRICE'
-const ETH_PRICE_KEY = 'ETH_PRICE_KEY'
-const UPDATE_MASTERCHEF_CHART = 'UPDATE_MASTERCHEF_CHART'
-
-function reducer(state, { type, payload }) {
-  switch (type) {
-    case UPDATE: {
-      const { data } = payload
-      return {
-        ...state,
-        globalData: data,
-      }
-    }
-    case UPDATE_CHART: {
-      const { daily, weekly } = payload
-      return {
-        ...state,
-        chartData: {
-          daily,
-          weekly,
-        },
-      }
-    }
-    case UPDATE_MASTERCHEF_CHART: {
-      const { daily, weekly } = payload
-      return {
-        ...state,
-        sushiLiquidityChart: {
-          daily,
-          weekly,
-        },
-      }
-    }
-    case UPDATE_ETH_PRICE: {
-      const { ethPrice, oneDayPrice, ethPriceChange } = payload
-      return {
-        [ETH_PRICE_KEY]: ethPrice,
-        oneDayPrice,
-        ethPriceChange,
-      }
-    }
-
-    default: {
-      throw Error(`Unexpected action type in DataContext reducer: '${type}'.`)
-    }
-  }
-}
-
-export function useGlobalData() {
+export function useGlobalData(exchangeSource: ExchangeSource) {
   const [state, { update, updateAllPairsInUniswap, updateAllTokensInUniswap }] = useGlobalDataContext()
-  const [ethPrice, oldEthPrice] = useEthPrice()
+  const [ethPrice, oldEthPrice] = useEthPrice(exchangeSource)
 
-  const data = state?.globalData
+  const data = _get(state, `globalData.${exchangeSource}`, null)
   useEffect(() => {
     async function fetchData() {
-      const globalData = await getGlobalData(ethPrice, oldEthPrice)
-      globalData && update(globalData)
+      const globalData = await getGlobalData(exchangeSource, ethPrice, oldEthPrice)
+      globalData && update(exchangeSource, globalData)
     }
     if (!data && ethPrice && oldEthPrice) {
       fetchData()
@@ -136,13 +90,13 @@ export function useGlobalData() {
   return data || {}
 }
 
-export function useGlobalChartData() {
+export function useGlobalChartData(source: ExchangeSource) {
   const [state, { updateChart }] = useGlobalDataContext()
   const [oldestDateFetch, setOldestDateFetched] = useState<any>()
   const [activeWindow] = useTimeframe()
 
-  const chartDataDaily = state?.chartData?.daily
-  const chartDataWeekly = state?.chartData?.weekly
+  const chartDataDaily = _get(state, `chartData.${source}.daily`, null)
+  const chartDataWeekly = _get(state, `chartData.${source}.weekly`, null)
 
   /**
    * Keep track of oldest date fetched. Used to
@@ -164,9 +118,10 @@ export function useGlobalChartData() {
   useEffect(() => {
     async function fetchData() {
       // historical stuff for chart
-      const [newChartData, newWeeklyData] = await getChartData(oldestDateFetch)
-      updateChart(newChartData, newWeeklyData)
+      const [newChartData, newWeeklyData] = await getChartData(source, oldestDateFetch)
+      updateChart(source, newChartData, newWeeklyData)
     }
+
     if (oldestDateFetch && !(chartDataDaily && chartDataWeekly)) {
       fetchData()
     }
@@ -175,7 +130,9 @@ export function useGlobalChartData() {
   return [chartDataDaily, chartDataWeekly]
 }
 
-async function getGlobalData(ethPrice, oldEthPrice) {
+async function getGlobalData(exchangeSource: ExchangeSource, ethPrice, oldEthPrice) {
+  const client = exchangeClient[exchangeSource]
+  const factory = factoryAddress[exchangeSource]
   // data for each day , historic data used for % changes
   let data: any = {}
   let oneDayData: any = {}
@@ -198,33 +155,33 @@ async function getGlobalData(ethPrice, oldEthPrice) {
     ])
 
     // fetch the global data
-    const result = await sushiClient.query({
-      query: GLOBAL_DATA(),
+    const result = await client.query({
+      query: GLOBAL_DATA(factory),
       fetchPolicy: 'cache-first',
     })
     data = result.data.uniswapFactories[0]
 
     // fetch the historical data
-    const oneDayResult = await sushiClient.query({
-      query: GLOBAL_DATA(oneDayBlock?.number),
+    const oneDayResult = await client.query({
+      query: GLOBAL_DATA(factory, oneDayBlock?.number),
       fetchPolicy: 'cache-first',
     })
     oneDayData = oneDayResult.data.uniswapFactories[0]
 
-    const twoDayResult = await sushiClient.query({
-      query: GLOBAL_DATA(twoDayBlock?.number),
+    const twoDayResult = await client.query({
+      query: GLOBAL_DATA(factory, twoDayBlock?.number),
       fetchPolicy: 'cache-first',
     })
     twoDayData = twoDayResult.data.uniswapFactories[0]
 
-    const oneWeekResult = await sushiClient.query({
-      query: GLOBAL_DATA(oneWeekBlock?.number),
+    const oneWeekResult = await client.query({
+      query: GLOBAL_DATA(factory, oneWeekBlock?.number),
       fetchPolicy: 'cache-first',
     })
     const oneWeekData = oneWeekResult.data.uniswapFactories[0]
 
-    const twoWeekResult = await sushiClient.query({
-      query: GLOBAL_DATA(twoWeekBlock?.number),
+    const twoWeekResult = await client.query({
+      query: GLOBAL_DATA(factory, twoWeekBlock?.number),
       fetchPolicy: 'cache-first',
     })
     const twoWeekData = twoWeekResult.data.uniswapFactories[0]
@@ -277,7 +234,8 @@ async function getGlobalData(ethPrice, oldEthPrice) {
   return data
 }
 
-const getChartData = async (oldestDateToFetch) => {
+const getChartData = async (exchangeSource: ExchangeSource, oldestDateToFetch: number) => {
+  const client = exchangeClient[exchangeSource]
   let data = []
   const weeklyData = []
   const utcEndTime = dayjs.utc()
@@ -286,7 +244,7 @@ const getChartData = async (oldestDateToFetch) => {
 
   try {
     while (!allFound) {
-      const result = await sushiClient.query({
+      const result = await client.query({
         query: GLOBAL_CHART,
         variables: {
           startTime: oldestDateToFetch,
@@ -359,31 +317,93 @@ const getChartData = async (oldestDateToFetch) => {
   return [data, weeklyData]
 }
 
+const UPDATE = 'UPDATE'
+const UPDATE_CHART = 'UPDATE_CHART'
+const UPDATE_ETH_PRICE = 'UPDATE_ETH_PRICE'
+const ETH_PRICE_KEY = 'ETH_PRICE_KEY'
+const UPDATE_MASTERCHEF_CHART = 'UPDATE_MASTERCHEF_CHART'
+
+function reducer(state, { type, payload }) {
+  switch (type) {
+    case UPDATE: {
+      const { data, source } = payload
+      return {
+        ...state,
+        globalData: {
+          ...state.globalData,
+          [source]: data,
+        },
+      }
+    }
+    case UPDATE_CHART: {
+      const { daily, weekly, source } = payload
+      return {
+        ...state,
+        chartData: {
+          ...state.chartData,
+          [source]: {
+            daily,
+            weekly,
+          },
+        },
+      }
+    }
+    case UPDATE_MASTERCHEF_CHART: {
+      const { daily, weekly } = payload
+      return {
+        ...state,
+        sushiLiquidityChart: {
+          daily,
+          weekly,
+        },
+      }
+    }
+    case UPDATE_ETH_PRICE: {
+      const { ethPrice, oneDayPrice, ethPriceChange, source } = payload
+      return {
+        ...state,
+        [source]: {
+          [ETH_PRICE_KEY]: ethPrice,
+          oneDayPrice,
+          ethPriceChange,
+        },
+      }
+    }
+
+    default: {
+      throw Error(`Unexpected action type in DataContext reducer: '${type}'.`)
+    }
+  }
+}
+
 export default function Provider({ children }: { children: any }) {
   const [state, dispatch] = useReducer(reducer, {})
-  const update = useCallback((data) => {
+  const update = useCallback((source, data) => {
     dispatch({
       type: UPDATE,
       payload: {
+        source,
         data,
       },
     })
   }, [])
 
-  const updateChart = useCallback((daily, weekly) => {
+  const updateChart = useCallback((source: ExchangeSource, daily, weekly) => {
     dispatch({
       type: UPDATE_CHART,
       payload: {
+        source,
         daily,
         weekly,
       },
     })
   }, [])
 
-  const updateEthPrice = useCallback((ethPrice, oneDayPrice, ethPriceChange) => {
+  const updateEthPrice = useCallback((source: ExchangeSource, ethPrice, oneDayPrice, ethPriceChange) => {
     dispatch({
       type: UPDATE_ETH_PRICE,
       payload: {
+        source,
         ethPrice,
         oneDayPrice,
         ethPriceChange,

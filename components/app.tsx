@@ -7,9 +7,7 @@ interface Panel {
 }
 export const Panel = ({ className, children }: Panel) => (
   <>
-    <div className={cn(className, 'panel border-gray-200 border-0 rounded-md py-4 pl-4 bg-orange-100 shadow-lg')}>
-      {children}
-    </div>
+    <div className={cn(className, 'panel rounded-md py-4 pl-4 bg-white shadow-lg')}>{children}</div>
     <style jsx>{`
       .panel {
         height: 332px;
@@ -23,7 +21,7 @@ interface Spinner {
   className?: string
 }
 export const Spinner = ({ className }: Spinner) => (
-  <svg viewBox="0 0 38 38" className={cn('stroke-current text-orange-500 w-8 h-8', className)}>
+  <svg viewBox="0 0 38 38" className={cn('stroke-current text-gray-500 w-8 h-8', className)}>
     <g fill="none" fillRule="evenodd">
       <g transform="translate(1 1)" strokeWidth="3">
         <circle strokeOpacity=".5" cx="18" cy="18" r="18" />

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { ResponsiveContainer } from 'recharts'
-import { TimeFrame } from '../../constants'
+import { TimeFrame, ExchangeSource } from '../../constants'
 import TradingViewChart, { ChartType } from './tradingView'
 import { getTimeframe } from '../../utils'
 import { useGlobalChartData, useGlobalData } from '../../contexts/globalData'
@@ -18,11 +18,13 @@ enum VolumeWindow {
 
 interface GlobalChart {
   display: 'volume' | 'liquidity'
+  title: string
+  source: ExchangeSource
   className?: string
 }
-const GlobalChart = ({ display, className }: GlobalChart) => {
+const GlobalChart = ({ display, title, className, source }: GlobalChart) => {
   // global historical data
-  const [dailyData, weeklyData] = useGlobalChartData()
+  const [dailyData, weeklyData] = useGlobalChartData(source)
   const {
     totalLiquidityUSD,
     oneDayVolumeUSD,
@@ -30,7 +32,8 @@ const GlobalChart = ({ display, className }: GlobalChart) => {
     liquidityChangeUSD,
     oneWeekVolume,
     weeklyVolumeChange,
-  } = useGlobalData()
+  } = useGlobalData(source)
+
   // chart options
   const [chartView] = useState(display === 'volume' ? ChartView.VOLUME : ChartView.LIQUIDITY)
   // time window and window size for chart
@@ -88,10 +91,11 @@ const GlobalChart = ({ display, className }: GlobalChart) => {
       {chartDataFiltered && chartView === ChartView.LIQUIDITY && (
         <ResponsiveContainer aspect={60 / 28} ref={ref}>
           <TradingViewChart
+            exchangeSource={source}
             data={dailyData}
             base={totalLiquidityUSD}
             baseChange={liquidityChangeUSD}
-            title="Sushiswap Liquidity"
+            title={title}
             field="totalLiquidityUSD"
             width={width}
             type={ChartType.AREA}
@@ -101,6 +105,7 @@ const GlobalChart = ({ display, className }: GlobalChart) => {
       {chartDataFiltered && chartView === ChartView.VOLUME && (
         <ResponsiveContainer aspect={60 / 28}>
           <TradingViewChart
+            exchangeSource={source}
             data={chartDataFiltered}
             base={volumeWindow === VolumeWindow.WEEKLY ? oneWeekVolume : oneDayVolumeUSD}
             baseChange={volumeWindow === VolumeWindow.WEEKLY ? weeklyVolumeChange : volumeChangeUSD}
