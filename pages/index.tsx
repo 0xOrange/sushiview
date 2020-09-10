@@ -4,6 +4,7 @@ import Header from '../components/header'
 import dynamic from 'next/dynamic'
 import { Button, Panel } from '../components/app'
 import { formattedNum, toK } from '../utils'
+import { sushiClient, MASTERCHEF_POOL_DATA } from '../gql'
 
 const GlobalChart = dynamic(() => import('../components/charts/globalChart'), {
   ssr: false,

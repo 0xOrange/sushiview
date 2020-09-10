@@ -7,7 +7,7 @@ import {
   get2DayPercentChange,
   getBlocksFromTimestamps,
 } from '../utils'
-import { uniClient } from '../gql/client'
+import { sushiClient } from '../gql/client'
 import { ETH_PRICE, GLOBAL_CHART, GLOBAL_DATA } from '../gql/queries'
 import { useTimeframe } from './application'
 import utc from 'dayjs/plugin/utc'
@@ -48,11 +48,11 @@ const getEthPrice = async () => {
 
   try {
     const oneDayBlock = await getBlockFromTimestamp(utcOneDayBack)
-    const result = await uniClient.query({
+    const result = await sushiClient.query({
       query: ETH_PRICE(),
       fetchPolicy: 'cache-first',
     })
-    const resultOneDay = await uniClient.query({
+    const resultOneDay = await sushiClient.query({
       query: ETH_PRICE(oneDayBlock),
       fetchPolicy: 'cache-first',
     })
@@ -123,7 +123,6 @@ export function useGlobalData() {
   const [ethPrice, oldEthPrice] = useEthPrice()
 
   const data = state?.globalData
-
   useEffect(() => {
     async function fetchData() {
       const globalData = await getGlobalData(ethPrice, oldEthPrice)
@@ -199,55 +198,68 @@ async function getGlobalData(ethPrice, oldEthPrice) {
     ])
 
     // fetch the global data
-    const result = await uniClient.query({
+    const result = await sushiClient.query({
       query: GLOBAL_DATA(),
       fetchPolicy: 'cache-first',
     })
     data = result.data.uniswapFactories[0]
 
     // fetch the historical data
-    const oneDayResult = await uniClient.query({
+    const oneDayResult = await sushiClient.query({
       query: GLOBAL_DATA(oneDayBlock?.number),
       fetchPolicy: 'cache-first',
     })
     oneDayData = oneDayResult.data.uniswapFactories[0]
 
-    const twoDayResult = await uniClient.query({
+    const twoDayResult = await sushiClient.query({
       query: GLOBAL_DATA(twoDayBlock?.number),
       fetchPolicy: 'cache-first',
     })
     twoDayData = twoDayResult.data.uniswapFactories[0]
 
-    const oneWeekResult = await uniClient.query({
+    const oneWeekResult = await sushiClient.query({
       query: GLOBAL_DATA(oneWeekBlock?.number),
       fetchPolicy: 'cache-first',
     })
     const oneWeekData = oneWeekResult.data.uniswapFactories[0]
 
-    const twoWeekResult = await uniClient.query({
+    const twoWeekResult = await sushiClient.query({
       query: GLOBAL_DATA(twoWeekBlock?.number),
       fetchPolicy: 'cache-first',
     })
     const twoWeekData = twoWeekResult.data.uniswapFactories[0]
 
-    if (data && oneDayData && twoDayData && twoWeekData) {
-      const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
-        data.untrackedVolumeUSD,
-        oneDayData.untrackedVolumeUSD ? oneDayData.untrackedVolumeUSD : 0,
-        twoDayData.untrackedVolumeUSD ? twoDayData.untrackedVolumeUSD : 0,
-      )
+    // data && oneDayData && twoDayData && twoWeekData
+    if (data) {
+      if (oneDayData && twoDayData) {
+        const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
+          data.untrackedVolumeUSD,
+          oneDayData.untrackedVolumeUSD ? oneDayData.untrackedVolumeUSD : 0,
+          twoDayData.untrackedVolumeUSD ? twoDayData.untrackedVolumeUSD : 0,
+        )
+        data.oneDayVolumeUSD = oneDayVolumeUSD
+        data.volumeChangeUSD = volumeChangeUSD
+      }
 
-      const [oneWeekVolume, weeklyVolumeChange] = get2DayPercentChange(
-        data.untrackedVolumeUSD,
-        oneWeekData.untrackedVolumeUSD,
-        twoWeekData.untrackedVolumeUSD,
-      )
+      if (oneWeekData && twoWeekData) {
+        const [oneWeekVolume, weeklyVolumeChange] = get2DayPercentChange(
+          data.untrackedVolumeUSD,
+          oneWeekData.untrackedVolumeUSD,
+          twoWeekData.untrackedVolumeUSD,
+        )
+        data.oneWeekVolume = oneWeekVolume
+        data.weeklyVolumeChange = weeklyVolumeChange
+      }
 
-      const [oneDayTxns, txnChange] = get2DayPercentChange(
-        data.txCount,
-        oneDayData.txCount ? oneDayData.txCount : 0,
-        twoDayData.txCount ? twoDayData.txCount : 0,
-      )
+      if (oneDayData && twoDayData) {
+        const [oneDayTxns, txnChange] = get2DayPercentChange(
+          data.txCount,
+          oneDayData.txCount ? oneDayData.txCount : 0,
+          twoDayData.txCount ? twoDayData.txCount : 0,
+        )
+        data.oneDayTxns = oneDayTxns
+        data.txnChange = txnChange
+      }
 
       // format the total liquidity in USD
       data.totalLiquidityUSD = data.totalLiquidityETH * ethPrice
@@ -257,18 +269,11 @@ async function getGlobalData(ethPrice, oldEthPrice) {
       )
 
       // add relevant fields with the calculated amounts
-      data.oneDayVolumeUSD = oneDayVolumeUSD
-      data.oneWeekVolume = oneWeekVolume
-      data.weeklyVolumeChange = weeklyVolumeChange
-      data.volumeChangeUSD = volumeChangeUSD
       data.liquidityChangeUSD = liquidityChangeUSD
-      data.oneDayTxns = oneDayTxns
-      data.txnChange = txnChange
     }
   } catch (e) {
     console.log(e)
   }
-
   return data
 }
 
@@ -281,7 +286,7 @@ const getChartData = async (oldestDateToFetch) => {
 
   try {
     while (!allFound) {
-      const result = await uniClient.query({
+      const result = await sushiClient.query({
         query: GLOBAL_CHART,
         variables: {
           startTime: oldestDateToFetch,

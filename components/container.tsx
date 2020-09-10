@@ -12,7 +12,7 @@ const Container = ({ dottedBG: dotted, children, className }: Container) => (
       .app-container {
         ${dotted
           ? `
-          background-image: radial-gradient(#feebc8 2.5px, transparent 2.5px), radial-gradient(#F6AD55 1px, transparent 1px);
+          background-image: radial-gradient(#D7D7D7 1px, transparent 1px), radial-gradient(#d7d7d7 1px, transparent 1px);
           background-position: 0 0, 25px 25px;
           background-size: 50px 50px;
           background-color: #FAFAFA;
