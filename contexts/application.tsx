@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useReducer, useMemo, useCallback } from 'react'
+import React, { createContext, useContext, useReducer, useMemo, useCallback, useEffect } from 'react'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { TimeFrame } from '../constants'
+import { healthClient, SUBGRAPH_HEALTH } from '../state'
 dayjs.extend(utc)
 
 const UPDATE = 'UPDATE'
@@ -18,6 +19,33 @@ const WEB3 = 'WEB3'
 const LATEST_BLOCK = 'LATEST_BLOCK'
 
 const ApplicationContext = createContext(null)
+
+export function useLatestBlock() {
+  const [state, { updateLatestBlock }] = useApplicationContext()
+
+  const latestBlock = state?.[LATEST_BLOCK]
+
+  useEffect(() => {
+    async function fetch() {
+      try {
+        const res = await healthClient.query({
+          query: SUBGRAPH_HEALTH,
+        })
+        const block = res.data.indexingStatusForCurrentVersion.chains[0].latestBlock.number
+        if (block) {
+          updateLatestBlock(block)
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    if (!latestBlock) {
+      fetch()
+    }
+  }, [latestBlock, updateLatestBlock])
+
+  return latestBlock
+}
 
 function useApplicationContext() {
   return useContext(ApplicationContext)

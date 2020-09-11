@@ -18,11 +18,10 @@ enum VolumeWindow {
 
 interface GlobalChart {
   display: 'volume' | 'liquidity'
-  title: string
   source: ExchangeSource
   className?: string
 }
-const GlobalChart = ({ display, title, className, source }: GlobalChart) => {
+const GlobalChart = ({ display, className, source }: GlobalChart) => {
   // global historical data
   const [dailyData, weeklyData] = useGlobalChartData(source)
   const {
@@ -84,6 +83,13 @@ const GlobalChart = ({ display, title, className, source }: GlobalChart) => {
         <Spinner />
       </div>
     )
+  }
+
+  let title = 'Liquidity'
+  if (source === ExchangeSource.SUSHISWAP) {
+    title = `SushiSwap Liquidity`
+  } else if (source === ExchangeSource.UNISWAP) {
+    title = `Uniswap Liquidity`
   }
 
   return (

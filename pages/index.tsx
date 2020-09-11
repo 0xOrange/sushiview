@@ -14,19 +14,22 @@ const Home = () => {
     <>
       <Header />
       <Container dottedBG className="py-6">
-        <div className="flex flex-col lg:flex-row items-center">
+        <div className="flex flex-col lg:flex-row items-center pb-6">
           <div className="flex-1 max-w-xl min-w-full lg:min-w-0 first:mr-4">
             <Panel className="mt-4">
-              <GlobalChart display="liquidity" title="Sushiswap Liquidity" source={ExchangeSource.SUSHISWAP} />
+              <GlobalChart display="liquidity" source={ExchangeSource.SUSHISWAP} />
             </Panel>
           </div>
 
           <div className="flex-1 max-w-xl min-w-full lg:min-w-0">
             <Panel className="mt-4">
-              <GlobalChart display="liquidity" title="Uniswap liquidity" source={ExchangeSource.UNISWAP} />
+              <GlobalChart display="liquidity" source={ExchangeSource.UNISWAP} />
             </Panel>
           </div>
         </div>
+      </Container>
+      <Container>
+        <div className="h-screen" />
       </Container>
     </>
   )

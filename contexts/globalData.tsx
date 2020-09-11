@@ -7,8 +7,8 @@ import {
   get2DayPercentChange,
   getBlocksFromTimestamps,
 } from '../utils'
-import { exchangeClient } from '../gql/client'
-import { ETH_PRICE, GLOBAL_CHART, GLOBAL_DATA } from '../gql/queries'
+import { exchangeClient } from '../state/client'
+import { ETH_PRICE, GLOBAL_CHART, GLOBAL_DATA } from '../state/queries'
 import { useTimeframe } from './application'
 import utc from 'dayjs/plugin/utc'
 import weekOfYear from 'dayjs/plugin/weekOfYear'

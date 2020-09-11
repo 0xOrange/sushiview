@@ -1,5 +1,5 @@
-import { blockClient } from '../gql/client'
-import { GET_BLOCK, GET_BLOCKS } from '../gql/queries'
+import { blockClient } from '../state/client'
+import { GET_BLOCK, GET_BLOCKS } from '../state/queries'
 import dayjs from 'dayjs'
 import { TimeFrame } from '../constants'
 
