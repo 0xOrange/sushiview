@@ -10,7 +10,9 @@ module.exports = {
     'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
   ],
-  rules: {},
+  rules: {
+    '@typescript-eslint/ban-ts-ignore': 'off',
+  },
   settings: {
     react: {
       version: 'detect',
