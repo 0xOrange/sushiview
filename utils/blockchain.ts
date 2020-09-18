@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { Currency, ChainId, Token, ETHER, WETH } from '@uniswap/sdk'
+import { Currency, ChainId, Token, ETHER, WETH } from '../forks/@uniswap/sdk/dist'
 
 export const isAddress = (value: string) => {
   try {

@@ -126,7 +126,7 @@ export const CurrencyInput = ({ className, tokenList, onChange, address, amount 
         </div>
       </div>
       <button
-        className="ml-4 mt-6 bg-gray-300 h-12 px-4 rounded-md"
+        className="ml-4 mt-6 bg-gray-300 h-12 px-4 rounded-md hover:bg-gray-400"
         onClick={() => onChange(inputTokenAmount, inputTokenAddress)}
       >
         Check

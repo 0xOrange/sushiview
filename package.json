@@ -35,8 +35,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
-    "postinstall": "rm -rf ./node_modules/@uniswap/sdk; mkdir -p ./node_modules/@uniswap/sdk; cp -r ./forks/@uniswap/sdk/ ./node_modules/@uniswap/sdk/"
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
   },
   "devDependencies": {
     "@types/node": "^14.6.3",

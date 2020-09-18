@@ -1,4 +1,4 @@
-import { CurrencyAmount, Fraction, JSBI, Percent, TokenAmount, Trade as UniTrade } from '@uniswap/sdk'
+import { CurrencyAmount, Fraction, JSBI, Percent, TokenAmount, Trade as UniTrade } from '../forks/@uniswap/sdk/dist'
 
 const BASE_FEE = new Percent(JSBI.BigInt(30), JSBI.BigInt(10000))
 const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))

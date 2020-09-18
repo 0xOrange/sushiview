@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useBlockNumber } from '../../state/application/hooks'
-import { ChainId } from '@uniswap/sdk'
+import { ChainId } from '../../forks/@uniswap/sdk/dist'
 import { useDispatch, useSelector } from 'react-redux'
 import { Interface, FunctionFragment } from '@ethersproject/abi'
 import { addMulticallListeners, removeMulticallListeners, Call, parseCallKey, toCallKey } from './actions'

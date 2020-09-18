@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import Numeral from 'numeral'
-import { JSBI, Percent } from '@uniswap/sdk'
+import { JSBI, Percent } from '../forks/@uniswap/sdk/dist'
 dayjs.extend(utc)
 
 // using a currency library here in case we want to add more in future

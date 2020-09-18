@@ -14,7 +14,7 @@ import {
   parseCallKey,
   updateMulticallResults,
 } from './actions'
-import { ChainId } from '@uniswap/sdk'
+import { ChainId } from '../../forks/@uniswap/sdk/dist'
 import { useActiveWeb3React, chunkArray, useDebounce } from '../../hooks'
 import { isAddress } from 'ethers/lib/utils'
 

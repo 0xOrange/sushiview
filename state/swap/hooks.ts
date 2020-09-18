@@ -1,4 +1,4 @@
-import { Trade, Currency, CurrencyAmount, JSBI, Token, TokenAmount } from '@uniswap/sdk'
+import { Trade, Currency, CurrencyAmount, JSBI, Token, TokenAmount } from '../../forks/@uniswap/sdk/dist'
 import { parseUnits } from '@ethersproject/units'
 import { useTradeExactIn } from '../../hooks/trades'
 import { useCurrency } from '../../hooks/tokens'

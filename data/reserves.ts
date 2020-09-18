@@ -1,4 +1,4 @@
-import { TokenAmount, Pair, Currency, ChainId } from '@uniswap/sdk'
+import { TokenAmount, Pair, Currency, ChainId } from '../forks/@uniswap/sdk/dist'
 import { useMemo } from 'react'
 import { wrappedCurrency } from '../utils/blockchain'
 import { Interface } from '@ethersproject/abi'
@@ -27,7 +27,7 @@ export function usePairs(
         wrappedCurrency(currencyA, chainId),
         wrappedCurrency(currencyB, chainId),
       ]),
-    [chainId, currencies, source],
+    [chainId, currencies],
   )
 
   const pairAddresses = useMemo(
