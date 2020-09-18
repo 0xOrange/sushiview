@@ -1,6 +1,7 @@
 import React from 'react'
 import Container from '../components/container'
 import Header from '../components/header'
+import { TokensList } from '../components/tokensList'
 import dynamic from 'next/dynamic'
 import { Panel } from '../components/app'
 import { ExchangeSource } from '../constants'
@@ -9,7 +10,7 @@ const GlobalChart = dynamic(() => import('../components/charts/globalChart'), {
   ssr: false,
 })
 
-const Home = () => {
+const Home = (): JSX.Element => {
   return (
     <>
       <Header />
@@ -29,7 +30,9 @@ const Home = () => {
         </div>
       </Container>
       <Container>
-        <div className="h-screen" />
+        <div className="h-screen">
+          <TokensList />
+        </div>
       </Container>
     </>
   )

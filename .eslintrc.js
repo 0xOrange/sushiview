@@ -9,9 +9,11 @@ module.exports = {
     'plugin:react/recommended',
     'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
+    'plugin:react-hooks/recommended',
   ],
   rules: {
     '@typescript-eslint/ban-ts-ignore': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
   },
   settings: {
     react: {

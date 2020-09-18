@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import Numeral from 'numeral'
+import { JSBI, Percent } from '@uniswap/sdk'
 dayjs.extend(utc)
 
 // using a currency library here in case we want to add more in future
@@ -10,13 +11,13 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2,
 })
 
-export const toK = (num: number | string) => {
+export const toK = (num: number | string): string => {
   return Numeral(num).format('0.[00]a')
 }
 
-export const formattedNum = (num: number, usd = false, acceptNegatives = false) => {
+export const formattedNum = (num: number, usd = false): string => {
   if (isNaN(num)) {
-    return usd ? '$0' : 0
+    return usd ? '$0' : '0'
   }
 
   if (num > 500000000) {
@@ -27,7 +28,7 @@ export const formattedNum = (num: number, usd = false, acceptNegatives = false) 
     if (usd) {
       return '$0'
     }
-    return 0
+    return '0'
   }
 
   if (num < 0.0001 && num > 0) {
@@ -47,11 +48,15 @@ export const formattedNum = (num: number, usd = false, acceptNegatives = false) 
     }
   }
 
-  return Number(num.toFixed(5))
+  return Number(num.toFixed(5)) + ''
 }
 
 // gets the amoutn difference plus the % change in change itself (second order change)
-export const get2DayPercentChange = (valueNow: number, value24HoursAgo: number, value48HoursAgo: number) => {
+export const get2DayPercentChange = (
+  valueNow: number,
+  value24HoursAgo: number,
+  value48HoursAgo: number,
+): [number, number] => {
   // get volume info for both 24 hour periods
   const currentChange = valueNow - value24HoursAgo
   const previousChange = value24HoursAgo - value48HoursAgo
@@ -65,10 +70,15 @@ export const get2DayPercentChange = (valueNow: number, value24HoursAgo: number, 
 }
 
 // get standard percent change between two values
-export const getPercentChange = (valueNow: number, value24HoursAgo: number) => {
+export const getPercentChange = (valueNow: number, value24HoursAgo: number): number => {
   const adjustedPercentChange = ((valueNow - value24HoursAgo) / value24HoursAgo) * 100
   if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
     return 0
   }
   return adjustedPercentChange
+}
+
+// converts a basis points value to a sdk percent
+export function basisPointsToPercent(num: number): Percent {
+  return new Percent(JSBI.BigInt(num), JSBI.BigInt(10000))
 }
