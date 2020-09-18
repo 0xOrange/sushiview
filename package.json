@@ -29,7 +29,13 @@
     "react-use": "15.3.4",
     "recharts": "1.8.5",
     "tailwindcss": "1.7.6",
-    "web3": "1.2.11"
+    "web3": "1.2.11",
+    "big.js": "^5.2.2",
+    "decimal.js-light": "^2.5.0",
+    "jsbi": "^3.1.1",
+    "tiny-invariant": "^1.1.0",
+    "tiny-warning": "^1.0.3",
+    "toformat": "^2.0.0"
   },
   "scripts": {
     "dev": "next dev",

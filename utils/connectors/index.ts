@@ -2,7 +2,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { NetworkConnector } from './NetworkConnector'
 
-const NETWORK_URL = 'https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847'
+const NETWORK_URL = 'https://mainnet.infura.io/v3/f3a56669a6c9404fbaf018bbb57b9dfc'
 
 export const NETWORK_CHAIN_ID: number = parseInt(process.env.REACT_APP_CHAIN_ID ?? '1')
 
