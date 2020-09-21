@@ -24,7 +24,7 @@ const NavItem = ({
 }) => (
   <Link href={href}>
     <a
-      className={cn('text-gray-600 hover:text-orange-500 px-4 py-2 first:px-0 no-underline text-md font-semibold', {
+      className={cn('text-gray-600 hover:text-gray-800 px-4 py-2 first:px-0 no-underline text-base', {
         'text-orange-500 hover:text-orange-500': selected,
       })}
       title={title}
@@ -43,20 +43,13 @@ const Nav = () => {
         <NavItem title="SushiView Home" href="/">
           <Logo />
         </NavItem>
-        <NavItem title="Tokens" href="#" selected={route.startsWith('/tokens')}>
-          Tokens
+        <NavItem title="Tokens" href="/" selected={route == '/'}>
+          Dashboard
         </NavItem>
-        <NavItem title="Pools" href="#" selected={route.startsWith('/pools')}>
-          Pools
-        </NavItem>
-        <NavItem title="Accounts info" href="#" selected={route.startsWith('/accounts')}>
-          Accounts
+        <NavItem title="Tokens" href="/compare" selected={route.startsWith('/compare')}>
+          Compare
         </NavItem>
       </div>
-
-      <button className="hidden md:block outline-none border-solid border-2 border-gray-600 rounded-lg h-10 px-2 hover:bg-orange-500 hover:border-orange-500 hover:text-white focus:outline-none">
-        My Account
-      </button>
     </nav>
   )
 }

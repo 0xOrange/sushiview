@@ -130,7 +130,7 @@ export function useGlobalChartData(source: ExchangeSource) {
   return [chartDataDaily, chartDataWeekly]
 }
 
-async function getGlobalData(exchangeSource: ExchangeSource, ethPrice, oldEthPrice) {
+export async function getGlobalData(exchangeSource: ExchangeSource, ethPrice, oldEthPrice) {
   const client = exchangeClient[exchangeSource]
   const factory = factoryAddress[exchangeSource]
   // data for each day , historic data used for % changes
@@ -141,24 +141,29 @@ async function getGlobalData(exchangeSource: ExchangeSource, ethPrice, oldEthPri
   try {
     // get timestamps for the days
     const utcCurrentTime = dayjs()
+    const utcOneHourBack = utcCurrentTime.subtract(1, 'hour').unix()
     const utcOneDayBack = utcCurrentTime.subtract(1, 'day').unix()
     const utcTwoDaysBack = utcCurrentTime.subtract(2, 'day').unix()
     const utcOneWeekBack = utcCurrentTime.subtract(1, 'week').unix()
     const utcTwoWeeksBack = utcCurrentTime.subtract(2, 'week').unix()
 
     // get the blocks needed for time travel queries
-    const [oneDayBlock, twoDayBlock, oneWeekBlock, twoWeekBlock] = await getBlocksFromTimestamps([
+    const [oneHourBlock, oneDayBlock, twoDayBlock, oneWeekBlock, twoWeekBlock] = await getBlocksFromTimestamps([
+      utcOneHourBack,
+      utcOneDayBack,
       utcOneDayBack,
       utcTwoDaysBack,
       utcOneWeekBack,
       utcTwoWeeksBack,
     ])
-
+    const ethereumBlockTime =
+      (oneHourBlock.timestamp - oneDayBlock.timestamp) / (oneHourBlock.number - oneDayBlock.number)
     // fetch the global data
     const result = await client.query({
       query: GLOBAL_DATA(factory),
       fetchPolicy: 'cache-first',
     })
+
     data = result.data.uniswapFactories[0]
 
     // fetch the historical data
@@ -188,6 +193,7 @@ async function getGlobalData(exchangeSource: ExchangeSource, ethPrice, oldEthPri
 
     // data && oneDayData && twoDayData && twoWeekData
     if (data) {
+      data.ethereumBlockTime = ethereumBlockTime
       if (oneDayData && twoDayData) {
         const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
           data.untrackedVolumeUSD,

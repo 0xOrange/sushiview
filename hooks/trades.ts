@@ -90,7 +90,7 @@ function useAllCommonPairs(source: ExchangeSource, currencyA?: Currency, currenc
               return true
             })
         : [],
-    [tokenA, tokenB, bases, basePairs, chainId, source],
+    [tokenA, tokenB, bases, basePairs, chainId],
   )
 
   const allPairs = usePairs(source, allPairCombinations)

@@ -21,19 +21,15 @@ export function useDerivedSwapInfo(
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
 } {
-  // const { account } = useActiveWeb3React()
-
   const independentField = Field.INPUT
 
   const inputCurrency = useCurrency(inputCurrencyId)
   const outputCurrency = useCurrency(outputCurrencyId)
-  // const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
   const bestTradeExactIn = useTradeExactIn(source, isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  // const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
   const bestTradeExactOut = undefined
 
   const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut

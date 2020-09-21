@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { BUNDLE_ID } from '../constants'
+import { BUNDLE_ID, MASTERCHEF_ADDRESS } from '../constants'
 
 export const GET_BLOCK = gql`
   query blocks($timestampFrom: Int!, $timestampTo: Int!) {
@@ -98,13 +98,18 @@ export const ETH_PRICE = (block?: number) => {
   return gql(queryString)
 }
 
-export const MASTERCHEF_POOL_DATA = (limit: number) => gql`
-    query masterChefPoolDatas {
-      masterChefPoolDatas(first: ${limit}, orderBy: timestamp, orderDirection: desc) {
+export const MASTERCHEF_POOLS = (limit: number) => gql`
+    query masterChefPools {
+      masterChefPools(first: ${limit}, orderBy: balance, orderDirection: desc) {
         id,
-        timestamp,
         balance,
-        allocShare
+        allocPoint,
+        lastRewardBlock,
+        accSushiPerShare,
+        lpToken
+      }
+      masterChef(id: 1) {
+        totalAllocPoint
       }
     }
 `
@@ -156,6 +161,68 @@ export const TOKEN_DATA = (tokenAddress: string, block?: number) => {
       }
       pairs1: pairs(where: {token1: "${tokenAddress}"}, first: 50, orderBy: reserveUSD, orderDirection: desc){
         id
+      }
+    }
+  `
+  return gql(queryString)
+}
+
+export const TOP_LPS_PER_PAIRS = gql`
+  query lps($pair: Bytes!) {
+    liquidityPositions(where: { pair: $pair }, orderBy: liquidityTokenBalance, orderDirection: desc, first: 10) {
+      user {
+        id
+      }
+      pair {
+        id
+      }
+      liquidityTokenBalance
+    }
+  }
+`
+
+export const PAIR_BY_ID = (ids: string[]) => {
+  const queryString = `
+    query lps {
+      pairs(where: {id_in: ${JSON.stringify(ids)}}) {
+        id
+        token0 {
+          id
+          decimals
+          symbol
+          derivedETH
+        }
+        token1 {
+          id
+          decimals
+          symbol
+          derivedETH
+        }
+        reserve0
+        reserve1
+        totalSupply
+        reserveETH
+        reserveUSD
+        trackedReserveETH
+      }
+      liquidityPositions(where: {user: ${JSON.stringify(MASTERCHEF_ADDRESS)}, pair_in: ${JSON.stringify(ids)}}) {
+        pair {
+          id
+        }
+        liquidityTokenBalance
+      }
+    }
+  `
+  return gql(queryString)
+}
+
+export const PAIR_RESERVE_BY_ID = (ids: string[], block?: number) => {
+  const queryString = `
+    query lps {
+      pairs(${block ? `block : {number: ${block}}` : ``} where: {id_in: ${JSON.stringify(ids)}}) {
+        id
+        reserveUSD
+        totalSupply
       }
     }
   `

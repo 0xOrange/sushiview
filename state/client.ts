@@ -24,6 +24,13 @@ export const sushiClient = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
+export const masterChefClient = new ApolloClient({
+  link: new HttpLink({
+    uri: 'https://api.thegraph.com/subgraphs/id/QmXBvuazDoQUBzh9uZnuqgQUFWRdc58HcGAb95ZP8nf18F',
+  }),
+  cache: new InMemoryCache(),
+})
+
 export const exchangeClient: Record<ExchangeSource, ApolloClient<NormalizedCacheObject>> = {
   [ExchangeSource.UNISWAP]: uniClient,
   [ExchangeSource.SUSHISWAP]: sushiClient,
