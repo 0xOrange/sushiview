@@ -7,7 +7,7 @@ interface IPanel {
 }
 export const Panel = ({ className, children }: IPanel): JSX.Element => (
   <>
-    <div className={cn(className, 'panel rounded-md py-4 pl-4 bg-white shadow-lg')}>{children}</div>
+    <div className={cn(className, 'panel rounded-md py-4 pl-4 border-gray-400 border bg-white')}>{children}</div>
     <style jsx>{`
       .panel {
         height: 332px;

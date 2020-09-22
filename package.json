@@ -5,6 +5,9 @@
   "main": "index.js",
   "license": "WTFPL",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
+    "@fortawesome/react-fontawesome": "^0.1.11",
     "@reduxjs/toolkit": "^1.4.0",
     "@uniswap/token-lists": "^1.0.0-beta.16",
     "@uniswap/v2-core": "^1.0.1",
@@ -13,11 +16,14 @@
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.10",
     "apollo-link-http": "1.5.17",
+    "big.js": "^5.2.2",
     "classnames": "2.2.6",
     "dayjs": "1.8.35",
+    "decimal.js-light": "^2.5.0",
     "ethers": "5.0.10",
     "graphql": "15.3.0",
     "graphql-tag": "2.11.0",
+    "jsbi": "^3.1.1",
     "lightweight-charts": "3.1.5",
     "lodash": "4.17.20",
     "next": "9.5.3",
@@ -28,14 +34,10 @@
     "react-redux": "^7.2.1",
     "react-use": "15.3.4",
     "recharts": "1.8.5",
-    "tailwindcss": "1.7.6",
-    "web3": "1.2.11",
-    "big.js": "^5.2.2",
-    "decimal.js-light": "^2.5.0",
-    "jsbi": "^3.1.1",
     "tiny-invariant": "^1.1.0",
     "tiny-warning": "^1.0.3",
-    "toformat": "^2.0.0"
+    "toformat": "^2.0.0",
+    "web3": "1.2.11"
   },
   "scripts": {
     "dev": "next dev",
@@ -56,7 +58,10 @@
     "husky": "^4.2.3",
     "lint-staged": "^10.3.0",
     "prettier": "^2.1.1",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "postcss-flexbugs-fixes": "4.2.1",
+    "postcss-preset-env": "^6.7.0",
+    "tailwindcss": "1.7.6"
   },
   "husky": {
     "hooks": {

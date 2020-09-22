@@ -55,7 +55,7 @@ const Nav = () => {
 }
 
 const Header = () => (
-  <header className="bg-white sticky top-0 flex flex-col h-16 z-50 space-around items-center justify-center border-b border-solid border-gray-200">
+  <header className="bg-white sticky top-0 flex flex-col h-16 z-50 space-around items-center justify-center">
     <Nav />
   </header>
 )

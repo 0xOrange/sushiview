@@ -17,9 +17,12 @@ import dayjs from 'dayjs'
 dayjs.extend(utc)
 
 const SUSHI_ADDRESS = _find(tokensList.tokens, { symbol: 'SUSHI' }).address
+const SUSHIBAR_ADDRESS = '0x8798249c2e607446efb7ad49ec89dd1865ff4272'
 const sushiContract = new Contract(SUSHI_ADDRESS, erc20Interface)
+const sushiBarContract = new Contract(SUSHIBAR_ADDRESS, erc20Interface)
 
 interface SushiData {
+  sushiBarTotalSupply: JSBI
   totalSupply: JSBI
   valueUSD: number
   marketCap: number
@@ -27,6 +30,7 @@ interface SushiData {
 
 export const useSushiData = (): SushiData | null => {
   const sushiContractResult = useSingleCallResult(sushiContract, 'totalSupply')
+  const sushiBarContractResult = useSingleCallResult(sushiBarContract, 'totalSupply')
   const [ethPrice] = useEthPrice(ExchangeSource.SUSHISWAP)
   const [out, setOut] = useState<SushiData | null>(null)
   const blockNumber = useBlockNumber()
@@ -37,6 +41,7 @@ export const useSushiData = (): SushiData | null => {
       console.debug('Updating useSushiData: ' + blockNumber)
 
       const totalSupply = JSBI.BigInt(_get(sushiContractResult, 'result.0', '-1'))
+      const sushiBarTotalSupply = JSBI.BigInt(_get(sushiBarContractResult, 'result.0', '-1'))
       if (ethPrice > 0 && JSBI.GT(totalSupply, 0)) {
         const tokenData = await sushiClient.query({
           query: TOKEN_DATA(SUSHI_ADDRESS),
@@ -44,8 +49,14 @@ export const useSushiData = (): SushiData | null => {
         })
         const derivedETH = _get(tokenData, 'data.tokens[0].derivedETH', null)
         const valueUSD = derivedETH * ethPrice
-        const marketCap = parseInt(JSBI.divide(totalSupply, JSBI.BigInt(1e18)).toString()) * derivedETH * ethPrice
-        setOut({ marketCap, totalSupply, valueUSD })
+        const s = JSBI.divide(totalSupply, JSBI.BigInt(1e18))
+        const marketCap = parseInt(s.toString()) * derivedETH * ethPrice
+        setOut({
+          marketCap,
+          totalSupply: s,
+          valueUSD,
+          sushiBarTotalSupply: JSBI.divide(sushiBarTotalSupply, JSBI.BigInt(1e18)),
+        })
       }
     }
     // Fetch only for new blocks
@@ -53,7 +64,7 @@ export const useSushiData = (): SushiData | null => {
       get()
       setLastBlock(blockNumber)
     }
-  }, [ethPrice, sushiContractResult, blockNumber, lastBlock])
+  }, [ethPrice, sushiContractResult, sushiBarContractResult, blockNumber, lastBlock])
   return out
 }
 
@@ -63,9 +74,10 @@ interface TokenReserve {
   reserve: number
   valueUSD: number
 }
-interface SushiMenu {
+export interface ISushiMenu {
   token0: TokenReserve
   token1: TokenReserve
+  pairID: string
   totalValueUSD: number
   totalValueUsd24HChange: number
   liquidityTokenBalance: number
@@ -73,8 +85,8 @@ interface SushiMenu {
   hourlyROI: number
 }
 
-export const useSushiMenu = (ethereumBlockTime: number | null): SushiMenu[] | null => {
-  const [menu, setMenu] = useState<SushiMenu[] | null>(null)
+export const useSushiMenu = (ethereumBlockTime: number | null): ISushiMenu[] | null => {
+  const [menu, setMenu] = useState<ISushiMenu[] | null>(null)
   const [lastBlock, setLastBlock] = useState<number>(0)
   const blockNumber = useBlockNumber()
   const [ethPrice] = useEthPrice(ExchangeSource.SUSHISWAP)
@@ -83,7 +95,7 @@ export const useSushiMenu = (ethereumBlockTime: number | null): SushiMenu[] | nu
       console.debug('Updating SushuMenu: ', blockNumber)
 
       const masterChef = await masterChefClient.query({
-        query: MASTERCHEF_POOLS(20),
+        query: MASTERCHEF_POOLS(30),
         fetchPolicy: 'cache-first',
       })
       const poolIds = masterChef.data.masterChefPools.map((p: any) => p.lpToken)
@@ -107,7 +119,7 @@ export const useSushiMenu = (ethereumBlockTime: number | null): SushiMenu[] | nu
       const liquidityPositions = masterchefPairs.data.liquidityPositions
       setMenu(
         pairs.map(
-          (pair): SushiMenu => {
+          (pair): ISushiMenu => {
             const totalSupply = pair.totalSupply
             const totalSupply24HAgo = _find(masterchefPairsOneDayAgo.data.pairs, { id: pair.id }).totalSupply
 
@@ -134,6 +146,7 @@ export const useSushiMenu = (ethereumBlockTime: number | null): SushiMenu[] | nu
               liquidityTokenBalance: parseFloat(
                 _find(liquidityPositions, { pair: { id: pair.id } }).liquidityTokenBalance,
               ),
+              pairID: pair.id,
               rewardPerHour,
               hourlyROI: 0,
             }

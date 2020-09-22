@@ -14,7 +14,7 @@ const Home = (): JSX.Element => {
   return (
     <>
       <Header />
-      <Container dottedBG className="py-6">
+      <Container className="pt-4" dottedBG>
         <div className="flex flex-col lg:flex-row items-center pb-6">
           <div className="flex-1 max-w-xl min-w-full lg:min-w-0 first:mr-4">
             <Panel className="mt-4">
@@ -30,7 +30,7 @@ const Home = (): JSX.Element => {
         </div>
       </Container>
       <Container>
-        <div className="h-screen">
+        <div className="min-h-screen pb-16">
           <SushiMenu />
         </div>
       </Container>

@@ -21,7 +21,7 @@ import { CurrencyInput } from './app'
 async function getData(source: ExchangeSource, ethPrice: number, ethPriceOld: number) {
   const topTokens = await getTopTokens(source, ethPrice, ethPriceOld)
   return _orderBy(
-    topTokens
+    (topTokens || [])
       .filter((p: any) => p.totalLiquidityUSD > 1)
       .map((p: any) => ({
         id: p.id,
