@@ -63,7 +63,7 @@ export const TokensList = (): JSX.Element => {
   const TableTitleSplit = ({ title }: { title: string }) => (
     <div>
       {title}
-      <div className="flex mt-2 border-t border-gray-200 pt-3">
+      <div className="flex mt-2 border-t border-gray-300 pt-3">
         <span className="flex-1">🍣</span>
         <span className="mt-1 w-px h-4 bg-gray-300 mx-5" />
         <span className="flex-1">🦄</span>
@@ -96,59 +96,69 @@ export const TokensList = (): JSX.Element => {
         address={inputTokenAddress}
         amount={inputTokenAmount}
       />
-      <table className="table-auto w-full bg-white">
-        <thead className="text-gray-800">
-          <tr>
-            <th className="border px-4 py-2">#</th>
-            <th className="border px-4 py-2">Token</th>
-            <th className="border px-4 py-2">
-              <TableTitleSplit title="Price" />
-            </th>
-            <th className="border px-4 py-2">
-              <TableTitleSplit title="Liquidity" />
-            </th>
-            <th className="border px-4 py-2">
-              <TableTitleSplit title="Price impact" />
-            </th>
-            <th className="border px-4 py-2">
-              <TableTitleSplit
-                title={`Estimated (for ${inputTokenAmount} ${
-                  _find(tokensList.tokens, {
-                    address: inputTokenAddress,
-                  }).symbol
-                })`}
-              />
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {availableTokensList.map((sushi, index) => {
-            const uni = _find(priceTableUni, { id: sushi.id })
-            if (!uni || !sushi) return <tr key={sushi.id}></tr>
+      <div className="w-full overflow-y-auto">
+        <table className="table-auto w-full bg-white">
+          <thead className="text-gray-800 bg-gray-100">
+            <tr className="">
+              <th>Token</th>
+              <th>
+                <TableTitleSplit title="Price" />
+              </th>
+              <th>
+                <TableTitleSplit title="Liquidity" />
+              </th>
+              <th>
+                <TableTitleSplit title="Price impact" />
+              </th>
+              <th>
+                <TableTitleSplit
+                  title={`Estimated (for ${inputTokenAmount} ${
+                    _find(tokensList.tokens, {
+                      address: inputTokenAddress,
+                    }).symbol
+                  })`}
+                />
+              </th>
+              <style jsx>{`
+                th {
+                  padding: 12px;
+                  font-weight: 400;
+                  font-size: 0.875rem;
+                  text-transform: uppercase;
+                  color: #1a202c;
+                }
+              `}</style>
+            </tr>
+          </thead>
+          <tbody>
+            {availableTokensList.map((sushi, index) => {
+              const uni = _find(priceTableUni, { id: sushi.id })
+              if (!uni || !sushi) return <tr key={sushi.id}></tr>
 
-            return (
-              <TokenRow
-                key={sushi.id}
-                index={index}
-                symbol={sushi.symbol}
-                outputCurrencyId={sushi.id}
-                inputCurrencyId={inputTokenAddress}
-                inputValue={inputTokenAmount}
-                tokenInfo={{
-                  [ExchangeSource.UNISWAP]: {
-                    liquidityUsd: parseFloat(uni.liquidityUSD),
-                    priceUsd: parseFloat(uni.priceUSD),
-                  },
-                  [ExchangeSource.SUSHISWAP]: {
-                    liquidityUsd: parseFloat(sushi.liquidityUSD),
-                    priceUsd: parseFloat(sushi.priceUSD),
-                  },
-                }}
-              />
-            )
-          })}
-        </tbody>
-      </table>
+              return (
+                <TokenRow
+                  key={sushi.id}
+                  index={index}
+                  symbol={sushi.symbol}
+                  outputCurrencyId={sushi.id}
+                  inputCurrencyId={inputTokenAddress}
+                  inputValue={inputTokenAmount}
+                  tokenInfo={{
+                    [ExchangeSource.UNISWAP]: {
+                      liquidityUsd: parseFloat(uni.liquidityUSD),
+                      priceUsd: parseFloat(uni.priceUSD),
+                    },
+                    [ExchangeSource.SUSHISWAP]: {
+                      liquidityUsd: parseFloat(sushi.liquidityUSD),
+                      priceUsd: parseFloat(sushi.priceUSD),
+                    },
+                  }}
+                />
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
@@ -169,8 +179,8 @@ interface TokenRow {
 
 const MultiItemsCol = ({ i1, i2 }: { i1: string; i2: string }) => (
   <div className="flex justify-between ">
-    <span className="mr-6 text-gray-700">{i1}</span>
-    <span className="text-gray-500">{i2}</span>
+    <span className="mr-6 text-gray-800">{i1}</span>
+    <span className="text-gray-600">{i2}</span>
   </div>
 )
 const TokenRow = ({ index, outputCurrencyId, inputCurrencyId, inputValue, tokenInfo, symbol }: TokenRow) => {
@@ -194,25 +204,24 @@ const TokenRow = ({ index, outputCurrencyId, inputCurrencyId, inputValue, tokenI
     outputCurrencyId,
   ])
   return (
-    <tr style={{ backgroundColor: index % 2 == 0 ? '#f9f9f9' : 'white' }}>
-      <td className="border px-4 py-2">{index + 1}</td>
-      <td className="border px-4 py-2">
+    <tr className="border-t hover:bg-gray-100 text-sm">
+      <td>
         {logoURI && <img src={logoURI} className="w-4 h-4 inline mr-3" />}
         {symbol}
       </td>
-      <td className="border px-4 py-2">
+      <td>
         <MultiItemsCol
           i1={formattedNum(tokenInfo[ExchangeSource.SUSHISWAP].priceUsd, true)}
           i2={formattedNum(tokenInfo[ExchangeSource.UNISWAP].priceUsd, true)}
         />
       </td>
-      <td className="border px-4 py-2">
+      <td>
         <MultiItemsCol
           i1={`$${toK(tokenInfo[ExchangeSource.SUSHISWAP].liquidityUsd)}`}
           i2={`$${toK(tokenInfo[ExchangeSource.UNISWAP].liquidityUsd)}`}
         />
       </td>
-      <td className="border px-4 py-2">
+      <td>
         <MultiItemsCol
           i1={
             priceImpactSushi == null || inputCurrencyId === outputCurrencyId ? '-' : `${priceImpactSushi.toFixed(2)}%`
@@ -220,7 +229,7 @@ const TokenRow = ({ index, outputCurrencyId, inputCurrencyId, inputValue, tokenI
           i2={priceImpactUni == null || inputCurrencyId === outputCurrencyId ? '-' : `${priceImpactUni.toFixed(2)}%`}
         />
       </td>
-      <td className="border px-4 py-2">
+      <td>
         <MultiItemsCol
           i1={
             slippageAdjustedAmountsSushi.OUTPUT == null || inputCurrencyId === outputCurrencyId
@@ -234,6 +243,11 @@ const TokenRow = ({ index, outputCurrencyId, inputCurrencyId, inputValue, tokenI
           }
         />
       </td>
+      <style jsx>{`
+        td {
+          padding: 16px;
+        }
+      `}</style>
     </tr>
   )
 }
