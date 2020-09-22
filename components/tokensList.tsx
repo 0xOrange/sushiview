@@ -116,8 +116,7 @@ export const TokensList = (): JSX.Element => {
                   _find(tokensList.tokens, {
                     address: inputTokenAddress,
                   }).symbol
-                  // eslint-disable-next-line prettier/prettier
-                  })`}
+                })`}
               />
             </th>
           </tr>
