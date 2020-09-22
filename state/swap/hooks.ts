@@ -1,9 +1,19 @@
-import { Trade, Currency, CurrencyAmount, JSBI, Token, TokenAmount } from '../../forks/@uniswap/sdk/dist'
+import {
+  Trade,
+  Currency,
+  CurrencyAmount,
+  JSBI,
+  Token,
+  TokenAmount,
+  ChainId,
+  ETHER,
+} from '../../forks/@uniswap/sdk/dist'
 import { parseUnits } from '@ethersproject/units'
 import { useTradeExactIn } from '../../hooks/trades'
-import { useCurrency } from '../../hooks/tokens'
 import { ExchangeSource } from '../../constants'
-import { basisPointsToPercent } from '../../utils'
+import { basisPointsToPercent, isAddress } from '../../utils'
+import tokenList from '../../tokens.json'
+import _find from 'lodash/find'
 
 export enum Field {
   INPUT = 'INPUT',
@@ -23,8 +33,8 @@ export function useDerivedSwapInfo(
 } {
   const independentField = Field.INPUT
 
-  const inputCurrency = useCurrency(inputCurrencyId)
-  const outputCurrency = useCurrency(outputCurrencyId)
+  const inputCurrency = getCurrency(inputCurrencyId)
+  const outputCurrency = getCurrency(outputCurrencyId)
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
@@ -76,4 +86,18 @@ export function computeSlippageAdjustedAmounts(
     [Field.INPUT]: trade?.maximumAmountIn(pct),
     [Field.OUTPUT]: trade?.minimumAmountOut(pct),
   }
+}
+
+export function getCurrency(currencyId: string | undefined): Currency | null | undefined {
+  const address: any = isAddress(currencyId)
+
+  const t = _find(tokenList.tokens, { address: currencyId.toLowerCase() })
+  if (!t) {
+    console.error(`TOKEN - ${currencyId} not registered`)
+    return null
+  }
+  const token = new Token(ChainId.MAINNET, address, t.decimals, t.symbol)
+
+  const isETH = currencyId?.toUpperCase() === 'ETH'
+  return isETH ? ETHER : token
 }
