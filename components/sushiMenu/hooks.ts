@@ -21,7 +21,7 @@ const SUSHIBAR_ADDRESS = '0x8798249c2e607446efb7ad49ec89dd1865ff4272'
 const sushiContract = new Contract(SUSHI_ADDRESS, erc20Interface)
 const sushiBarContract = new Contract(SUSHIBAR_ADDRESS, erc20Interface)
 
-interface SushiData {
+export interface SushiData {
   sushiBarTotalSupply: JSBI
   totalSupply: JSBI
   valueUSD: number
@@ -33,12 +33,10 @@ export const useSushiData = (): SushiData | null => {
   const sushiBarContractResult = useSingleCallResult(sushiBarContract, 'totalSupply')
   const [ethPrice] = useEthPrice(ExchangeSource.SUSHISWAP)
   const [out, setOut] = useState<SushiData | null>(null)
-  const blockNumber = useBlockNumber()
-  const [lastBlock, setLastBlock] = useState<number>(0)
 
   useEffect(() => {
     const get = async () => {
-      console.debug('Updating useSushiData: ' + blockNumber)
+      console.debug('Updating useSushiData: ')
 
       const totalSupply = JSBI.BigInt(_get(sushiContractResult, 'result.0', '-1'))
       const sushiBarTotalSupply = JSBI.BigInt(_get(sushiBarContractResult, 'result.0', '-1'))
@@ -59,12 +57,8 @@ export const useSushiData = (): SushiData | null => {
         })
       }
     }
-    // Fetch only for new blocks
-    if (blockNumber && lastBlock < blockNumber) {
-      get()
-      setLastBlock(blockNumber)
-    }
-  }, [ethPrice, sushiContractResult, sushiBarContractResult, blockNumber, lastBlock])
+    get()
+  }, [ethPrice, sushiContractResult, sushiBarContractResult])
   return out
 }
 
@@ -126,7 +120,7 @@ export const useSushiMenu = (ethereumBlockTime: number | null): ISushiMenu[] | n
             const totalValueUSD = parseFloat(pair.reserveUSD)
             const allocPoint = _find(masterChef.data.masterChefPools, { lpToken: pair.id }).allocPoint
             const rewardPerBlock = (allocPoint / masterChefTotalAllocPoint) * SUSHI_PER_BLOCK
-            const rewardPerHour = (3600 / ethereumBlockTime) * rewardPerBlock
+            const rewardPerHour = (3600 / (ethereumBlockTime || 13.411)) * rewardPerBlock
 
             return {
               token0: {
@@ -155,7 +149,7 @@ export const useSushiMenu = (ethereumBlockTime: number | null): ISushiMenu[] | n
       )
     }
     // Fetch only for new blocks
-    if (ethereumBlockTime && blockNumber && lastBlock < blockNumber) {
+    if (blockNumber && lastBlock < blockNumber) {
       get()
       setLastBlock(blockNumber)
     }
