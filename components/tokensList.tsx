@@ -234,12 +234,12 @@ const TokenRow = ({ outputCurrencyId, inputCurrencyId, inputValue, tokenInfo, sy
           i1={
             slippageAdjustedAmountsSushi.OUTPUT == null || inputCurrencyId === outputCurrencyId
               ? '-'
-              : `${slippageAdjustedAmountsSushi.OUTPUT.toFixed(2)} ${symbol}`
+              : `${formattedNum(parseFloat(slippageAdjustedAmountsSushi.OUTPUT.toFixed(5)))} ${symbol}`
           }
           i2={
             slippageAdjustedAmountsUni.OUTPUT == null || inputCurrencyId === outputCurrencyId
               ? '-'
-              : `${slippageAdjustedAmountsUni.OUTPUT.toFixed(2)} ${symbol}`
+              : `${formattedNum(parseFloat(slippageAdjustedAmountsUni.OUTPUT.toFixed(5)))} ${symbol}`
           }
         />
       </td>
