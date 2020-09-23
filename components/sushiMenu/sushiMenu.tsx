@@ -33,7 +33,6 @@ const SushiMenu = (): JSX.Element => {
   const fees24H = oneDayVolume != null ? oneDayVolume * 0.0005 : null
   const sushiValueUSD = _get(sushiData, 'valueUSD')
   const totalValueUSDAggregate = (sushiMenu || []).reduce((acc, current) => acc + current.totalValueUSD, 0)
-
   const sortedSushiMenu = useMemo(() => {
     if (!sushiMenu) return null
 
@@ -65,7 +64,7 @@ const SushiMenu = (): JSX.Element => {
   }, [sushiMenu, sortedCol.col, sortedCol.isDirectionAsc])
   return (
     <div className="">
-      <div className="flex flex-col md:flex-row  justify-evenly">
+      <div className="flex flex-col md:flex-row justify-evenly">
         <OverviewContainer
           header="Sushi token"
           emoji="🍣"
@@ -109,7 +108,7 @@ const SushiMenu = (): JSX.Element => {
             />
             <OverviewItem
               className="flex-1 border-l border-gray-300 pl-3 "
-              title="Total staked value"
+              title="Staked value"
               value={
                 sushiData && sushiData.sushiBarTotalSupply
                   ? toK(parseFloat(sushiData.sushiBarTotalSupply.toString()) * sushiValueUSD)
@@ -166,6 +165,7 @@ const SushiMenu = (): JSX.Element => {
             <tbody>
               {sortedSushiMenu &&
                 sortedSushiMenu.map((menu: ISushiMenu, index) => {
+                  const dayROI = ((menu.rewardPerHour * sushiValueUSD * 24) / menu.totalValueUSD) * 100
                   const [token0, token1] =
                     menu.token0.symbol === 'WETH' ? [menu.token1, menu.token0] : [menu.token0, menu.token1]
                   const token0Info = _find(tokensList.tokens, {
@@ -235,8 +235,15 @@ const SushiMenu = (): JSX.Element => {
                         </div>
                       </td>
                       <td>
-                        {(((menu.rewardPerHour * sushiValueUSD * 24) / menu.totalValueUSD) * 100).toFixed(2)}%
-                        <span className="ml-2">daily</span>
+                        <div>
+                          {dayROI.toFixed(2)}%<span className="ml-2">daily</span>
+                        </div>
+                        <div className="text-gray-500 text-sm">
+                          {(dayROI * 30).toFixed(2)}%<span className="ml-2">monthly</span>
+                        </div>
+                        <div className="text-gray-500 text-sm">
+                          {(dayROI * 365).toFixed(2)}%<span className="ml-2">yearly</span>
+                        </div>
                       </td>
                       <style jsx>{`
                         td {

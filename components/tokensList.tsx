@@ -122,7 +122,7 @@ export const TokensList = (): JSX.Element => {
               <style jsx>{`
                 th {
                   padding: 12px;
-                  font-weight: 400;
+                  font-weight: 500;
                   font-size: 0.875rem;
                   text-transform: uppercase;
                   color: #1a202c;
@@ -183,7 +183,7 @@ const MultiItemsCol = ({ i1, i2 }: { i1: string; i2: string }) => (
     <span className="text-gray-600">{i2}</span>
   </div>
 )
-const TokenRow = ({ index, outputCurrencyId, inputCurrencyId, inputValue, tokenInfo, symbol }: TokenRow) => {
+const TokenRow = ({ outputCurrencyId, inputCurrencyId, inputValue, tokenInfo, symbol }: TokenRow) => {
   const { v2Trade: uniTrade } = useDerivedSwapInfo(
     ExchangeSource.UNISWAP,
     inputCurrencyId,
