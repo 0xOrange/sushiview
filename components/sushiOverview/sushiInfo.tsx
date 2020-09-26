@@ -10,7 +10,7 @@ export const OverviewItem = ({
   value: string
   className?: string
 }): JSX.Element => (
-  <div className={cn('', className)}>
+  <div className={cn('w-48', className)}>
     <div className="text-sm text-gray-500">{title}</div>
     <div className="text-lg font-semibold  text-gray-700">{value}</div>
   </div>
@@ -30,14 +30,14 @@ export const OverviewContainer = ({
   link: string
 }): JSX.Element => {
   return (
-    <div className={cn(className, 'bg-white rounded-md border border-gray-300')}>
-      <div className="text-gray-800 text-lg border-b border-gray-200 p-3 text-center">
-        {emoji && <span className="mr-3 text-lg">{emoji}</span>}
+    <div className={cn('bg-white rounded-md border border-gray-400 max-w-md', className)}>
+      <div className="text-gray-800 font-semibold py-2 text-center bg-gray-200 rounded-t">
+        {emoji && <span className="mr-3">{emoji}</span>}
         <a href={link} className="hover:underline">
           {header}
         </a>
       </div>
-      <div className="p-3">{children}</div>
+      <div className="px-3 h-20">{children}</div>
     </div>
   )
 }

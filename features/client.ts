@@ -19,7 +19,7 @@ export const healthClient = new ApolloClient({
 
 export const sushiClient = new ApolloClient({
   link: new HttpLink({
-    uri: 'https://api.thegraph.com/subgraphs/id/QmePtiMXjoFp5YiJeraZhp6YsBQNpLKCKQ4q8DFUjrSk5C',
+    uri: 'https://api.thegraph.com/subgraphs/name/zippoxer/sushiswap-subgraph-fork',
   }),
   cache: new InMemoryCache(),
 })

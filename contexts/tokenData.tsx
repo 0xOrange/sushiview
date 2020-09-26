@@ -3,8 +3,8 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 import { getBlockFromTimestamp, get2DayPercentChange, getPercentChange } from '../utils'
-import { TOKEN_DATA, TOKENS_CURRENT, TOKENS_DYNAMIC } from '../state/queries'
-import { exchangeClient } from '../state'
+import { TOKEN_DATA, TOKENS_CURRENT, TOKENS_DYNAMIC } from '../features/queries'
+import { exchangeClient } from '../features'
 
 export const getTopTokens = async (source: ExchangeSource, ethPrice: number, ethPriceOld: number) => {
   const client = exchangeClient[source]

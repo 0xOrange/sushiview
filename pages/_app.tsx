@@ -3,14 +3,15 @@ import '../styles/index.css'
 import { AppProps } from 'next/app'
 import GlobalDataContextProvider from '../contexts/globalData'
 import ApplicationContextProvider from '../contexts/application'
-import MulticallUpdater from '../state/multicall/updater'
-import store from '../state'
+import MulticallUpdater from '../features/multicall/updater'
+import store from '../features'
 import { Provider } from 'react-redux'
-import ApplicationUpdater from '../state/application/updater'
+import ApplicationUpdater from '../features/application/updater'
 import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core'
 import { NetworkContextName } from '../constants'
 import { Web3Provider } from '@ethersproject/providers'
 import Web3ReactManager from '../components/web3ReactManager'
+import SiteLayout from '../components/layout/siteLayout'
 
 let Web3ProviderNetwork: any = () => <></>
 if (process.browser) {
@@ -32,7 +33,10 @@ const ContextProviders = ({ children }: any) => (
     <GlobalDataContextProvider>{children}</GlobalDataContextProvider>
   </ApplicationContextProvider>
 )
-function App({ Component, pageProps }: AppProps) {
+
+function App({ Component, pageProps }: AppProps): JSX.Element {
+  // ts-ignore
+  const getLayout = Component['getLayout'] || ((page) => <SiteLayout>{page}</SiteLayout>)
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
       <Web3ProviderNetwork getLibrary={getLibrary}>
@@ -40,9 +44,7 @@ function App({ Component, pageProps }: AppProps) {
           <Provider store={store}>
             <MulticallUpdater />
             <ApplicationUpdater />
-            <Web3ReactManager>
-              <Component {...pageProps} />
-            </Web3ReactManager>
+            <Web3ReactManager>{getLayout(<Component {...pageProps} />)}</Web3ReactManager>
           </Provider>
         </ContextProviders>
       </Web3ProviderNetwork>

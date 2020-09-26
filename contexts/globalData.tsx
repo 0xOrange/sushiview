@@ -7,8 +7,8 @@ import {
   get2DayPercentChange,
   getBlocksFromTimestamps,
 } from '../utils'
-import { exchangeClient } from '../state/client'
-import { ETH_PRICE, GLOBAL_CHART, GLOBAL_DATA } from '../state/queries'
+import { exchangeClient } from '../features/client'
+import { ETH_PRICE, GLOBAL_CHART, GLOBAL_DATA } from '../features/queries'
 import { useTimeframe } from './application'
 import utc from 'dayjs/plugin/utc'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
@@ -36,7 +36,7 @@ export function useEthPrice(exchangeSource: ExchangeSource) {
       }
     }
     checkForEthPrice()
-  }, [ethPrice, updateEthPrice])
+  }, [ethPrice, updateEthPrice, exchangeSource])
 
   return [ethPrice, ethPriceOld]
 }
@@ -85,7 +85,7 @@ export function useGlobalData(exchangeSource: ExchangeSource) {
     if (!data && ethPrice && oldEthPrice) {
       fetchData()
     }
-  }, [ethPrice, oldEthPrice, update, data, updateAllPairsInUniswap, updateAllTokensInUniswap])
+  }, [ethPrice, oldEthPrice, update, data, updateAllPairsInUniswap, updateAllTokensInUniswap, exchangeSource])
 
   return data || {}
 }

@@ -14,7 +14,7 @@ interface PriceTable {
 import _orderBy from 'lodash/orderBy'
 import _find from 'lodash/find'
 import _get from 'lodash/get'
-import { useDerivedSwapInfo, computeSlippageAdjustedAmounts } from '../state/swap/hooks'
+import { useDerivedSwapInfo, computeSlippageAdjustedAmounts } from '../features/swap/hooks'
 import { computeTradePriceBreakdown } from '../utils/trade'
 import { CurrencyInput } from './app'
 

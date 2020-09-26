@@ -1,20 +1,19 @@
 import React from 'react'
 import Container from '../components/container'
-import Header from '../components/header'
 import { TokensList } from '../components/tokensList'
 import dynamic from 'next/dynamic'
 import { Panel } from '../components/app'
 import { ExchangeSource } from '../constants'
+import { getLayout } from '../components/layout/tabLayout'
 
 const GlobalChart = dynamic(() => import('../components/charts/globalChart'), {
   ssr: false,
 })
 
-const Home = (): JSX.Element => {
+const Compare = (): JSX.Element => {
   return (
     <>
-      <Header />
-      <Container className="py-6" dottedBG>
+      <Container>
         <div className="flex flex-col lg:flex-row items-center pb-6">
           <div className="flex-1 max-w-xl min-w-full lg:min-w-0 first:mr-4">
             <Panel className="mt-4">
@@ -38,4 +37,6 @@ const Home = (): JSX.Element => {
   )
 }
 
-export default Home
+Compare.getLayout = getLayout
+
+export default Compare

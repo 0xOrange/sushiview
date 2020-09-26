@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { CancelledError, retry, RetryableError } from '../../utils/retry'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { AddressZero } from '@ethersproject/constants'
-import { useBlockNumber } from '../../state/application/hooks'
+import { useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
-import { MULTICALL_ABI, MULTICALL_NETWORKS } from './'
+import { MULTICALL_ABI, MULTICALL_NETWORKS } from '.'
 import {
   Call,
   errorFetchingMulticallResults,

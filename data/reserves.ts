@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { wrappedCurrency } from '../utils/blockchain'
 import { Interface } from '@ethersproject/abi'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
-import { useMultipleContractSingleData } from '../state/multicall/hooks'
+import { useMultipleContractSingleData } from '../features/multicall/hooks'
 import { ExchangeSource, factoryAddress, initCodeHash } from '../constants'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)

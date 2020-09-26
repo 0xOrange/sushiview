@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useMemo, useCallback, use
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { TimeFrame } from '../constants'
-import { healthClient, SUBGRAPH_HEALTH } from '../state'
+import { healthClient, SUBGRAPH_HEALTH } from '../features'
 dayjs.extend(utc)
 
 const UPDATE = 'UPDATE'
@@ -20,7 +20,7 @@ const LATEST_BLOCK = 'LATEST_BLOCK'
 
 const ApplicationContext = createContext(null)
 
-export function useLatestBlock() {
+export function useLatestBlock(): number | null {
   const [state, { updateLatestBlock }] = useApplicationContext()
 
   const latestBlock = state?.[LATEST_BLOCK]
@@ -101,7 +101,7 @@ function reducer(state, { type, payload }) {
   }
 }
 
-export default function Provider({ children }: { children: any }) {
+export default function Provider({ children }: { children: any }): JSX.Element {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
   const update = useCallback((currency) => {
     dispatch({
@@ -174,7 +174,7 @@ export default function Provider({ children }: { children: any }) {
   )
 }
 
-export function useTimeframe() {
+export function useTimeframe(): [TimeFrame, (TimeFrame) => any] {
   const [state, { updateTimeframe }] = useApplicationContext()
   const activeTimeframe = state?.[TIME_KEY]
   return [activeTimeframe, updateTimeframe]

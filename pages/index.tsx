@@ -1,22 +1,21 @@
 import React from 'react'
 import Container from '../components/container'
-import Header from '../components/header'
 import dynamic from 'next/dynamic'
 import { Panel } from '../components/app'
 import { ExchangeSource } from '../constants'
-import SushiMenu from '../components/sushiMenu/sushiMenu'
+import { getLayout } from '../components/layout/tabLayout'
+import SushiMenu from '../components/sushiMenu'
 
 const GlobalChart = dynamic(() => import('../components/charts/globalChart'), {
   ssr: false,
 })
 
-const Home = (): JSX.Element => {
+const Index = (): JSX.Element => {
   return (
     <>
-      <Header />
-      <Container className="pt-4" dottedBG>
+      <Container>
         <div className="flex flex-col lg:flex-row items-center pb-6">
-          <div className="flex-1 max-w-xl min-w-full lg:min-w-0 first:mr-4">
+          <div className="flex-1 max-w-xl min-w-full lg:min-w-0 mr-3">
             <Panel className="mt-4">
               <GlobalChart display="liquidity" source={ExchangeSource.SUSHISWAP} />
             </Panel>
@@ -28,14 +27,11 @@ const Home = (): JSX.Element => {
             </Panel>
           </div>
         </div>
-      </Container>
-      <Container>
-        <div className="min-h-screen pb-16">
-          <SushiMenu />
-        </div>
+        <SushiMenu />
       </Container>
     </>
   )
 }
 
-export default Home
+Index.getLayout = getLayout
+export default Index

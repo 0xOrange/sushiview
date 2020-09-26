@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
-import { useBlockNumber } from '../../state/application/hooks'
+import { useBlockNumber } from '../application/hooks'
 import { ChainId } from '../../forks/@uniswap/sdk/dist'
 import { useDispatch, useSelector } from 'react-redux'
 import { Interface, FunctionFragment } from '@ethersproject/abi'
 import { addMulticallListeners, removeMulticallListeners, Call, parseCallKey, toCallKey } from './actions'
-import { AppDispatch, AppState } from '../../state'
+import { AppDispatch, AppState } from '..'
 import { Contract } from '@ethersproject/contracts'
 
 type MethodArg = string | number | BigNumber

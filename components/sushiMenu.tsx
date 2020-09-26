@@ -1,16 +1,17 @@
 import React, { useState, useMemo } from 'react'
-import { ExchangeSource } from '../../constants'
-import { useGlobalData } from '../../contexts/globalData'
-import { formattedNum, toK } from '../../utils'
-import { useSushiData, useSushiMenu, ISushiMenu } from '../sushiMenu/hooks'
-import tokensList from '../../tokens.json'
+import { ExchangeSource } from '../constants'
+import { useGlobalData } from '../contexts/globalData'
+import { formattedNum } from '../utils'
+import { useSushiMenu, ISushiMenu } from '../features/farm'
+import tokensList from '../tokens.json'
 import cn from 'classnames'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSortAmountDown as faSortDown, faSortAmountUp as faSortUp } from '@fortawesome/free-solid-svg-icons'
 import _find from 'lodash/find'
 import _get from 'lodash/get'
 import _orderBy from 'lodash/orderBy'
-import { OverviewContainer, OverviewItem } from './sushiInfo'
+import { useSushiData } from '../features/farm/hooks'
+import Error from 'next/error'
 
 enum TableHead {
   PAIR = 'Pair',
@@ -26,16 +27,13 @@ const SushiMenu = (): JSX.Element => {
     col: TableHead.PAIR,
     isDirectionAsc: true,
   })
-  const sushiData = useSushiData()
+
   const globalData = useGlobalData(ExchangeSource.SUSHISWAP)
-  const sushiMenu = useSushiMenu(_get(globalData, 'ethereumBlockTime', null))
-  const oneDayVolume = _get(globalData, 'oneDayVolumeUSD', null)
-  const fees24H = oneDayVolume != null ? oneDayVolume * 0.0005 : null
-  const sushiValueUSD = _get(sushiData, 'valueUSD')
-  const totalValueUSDAggregate = (sushiMenu || []).reduce((acc, current) => acc + current.totalValueUSD, 0)
+  const sushiMenuResult = useSushiMenu(_get(globalData, 'ethereumBlockTime', null))
+
+  const sushiMenu = sushiMenuResult.isError ? null : sushiMenuResult.unwrap()
   const sortedSushiMenu = useMemo(() => {
     if (!sushiMenu) return null
-
     const sortDir = sortedCol.isDirectionAsc ? 'asc' : 'desc'
     if (sortedCol.col === TableHead.PAIR) {
       return _orderBy(
@@ -61,70 +59,18 @@ const SushiMenu = (): JSX.Element => {
     }
 
     return sushiMenu
-  }, [sushiMenu, sortedCol.col, sortedCol.isDirectionAsc])
+  }, [sortedCol.col, sortedCol.isDirectionAsc, sushiMenu])
+  const sushiResult = useSushiData()
+
+  if (sushiResult.isError || sushiMenuResult.isError) {
+    return <Error statusCode={500} />
+  }
+  const sushiData = sushiResult.unwrap()
+  const sushiValueUSD = _get(sushiData, 'valueUSD')
+  const totalValueUSDAggregate = (sushiMenu || []).reduce((acc, current) => acc + current.totalValueUSD, 0)
+
   return (
-    <div className="">
-      <div className="flex flex-col md:flex-row justify-evenly">
-        <OverviewContainer
-          header="Sushi token"
-          emoji="🍣"
-          className="flex-1 max-w-lg"
-          link="https://sushiswap.vision/token/0x6b3595068778dd592e39a122f4f5a5cf09c90fe2"
-        >
-          <div className="flex justify-evenly">
-            <OverviewItem
-              className="flex-1"
-              title="Value"
-              value={sushiValueUSD ? formattedNum(sushiValueUSD, true) : '-'}
-            />
-            <OverviewItem
-              title="Total Supply"
-              value={sushiData ? formattedNum(parseFloat(sushiData.totalSupply.toString()), false) : '-'}
-              className="border-l border-gray-300 pl-3 flex-1"
-            />
-            <OverviewItem
-              title="Market cap"
-              value={sushiData ? toK(sushiData.marketCap) : '-'}
-              className="border-l border-gray-300 pl-3 flex-1"
-            />
-          </div>
-        </OverviewContainer>
-
-        <OverviewContainer
-          header="Sushi bar"
-          emoji="🍺"
-          className="flex-1  max-w-lg"
-          link="https://app.boring.finance/#/sushibar"
-        >
-          <div className="flex justify-evenly">
-            <OverviewItem
-              title="Sushi staked"
-              value={
-                sushiData && sushiData.sushiBarTotalSupply
-                  ? formattedNum(parseFloat(sushiData.sushiBarTotalSupply.toString()), false)
-                  : '-'
-              }
-              className="flex-1"
-            />
-            <OverviewItem
-              className="flex-1 border-l border-gray-300 pl-3 "
-              title="Staked value"
-              value={
-                sushiData && sushiData.sushiBarTotalSupply
-                  ? toK(parseFloat(sushiData.sushiBarTotalSupply.toString()) * sushiValueUSD)
-                  : '-'
-              }
-            />
-            <OverviewItem
-              title="Fees collected(24h)"
-              value={fees24H ? formattedNum(fees24H, true) : '-'}
-              className="border-l border-gray-300 pl-3 flex-1"
-            />
-          </div>
-        </OverviewContainer>
-      </div>
-
-      <div className="mt-8 mb-4 text-gray-800 text-2xl font-semibold">SushiSwap Pools</div>
+    <div>
       {!sortedSushiMenu ? (
         <div className="animate-pulse flex space-x-4 w-full p-12 bg-white">
           <div className="flex-1 space-y-4 py-1">
@@ -227,7 +173,7 @@ const SushiMenu = (): JSX.Element => {
                           {((menu.totalValueUSD / totalValueUSDAggregate) * 100).toFixed(2)}% of total
                         </div>
                       </td>
-                      <td className="flex">
+                      <td className="flex mt-3">
                         <span className="text-2xl">🍣</span>
                         <div className="ml-3">
                           {((1e3 / menu.totalValueUSD) * menu.rewardPerHour * 24).toFixed(2)}
