@@ -1,64 +1,41 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { getTopTokens } from '../contexts/tokenData'
+import React, { useState, useMemo } from 'react'
 import { ExchangeSource } from '../constants'
 import { useEthPrice } from '../contexts/globalData'
 import { toK, formattedNum } from '../utils/number'
 import tokensList from '../tokens.json'
-interface PriceTable {
-  id: string
-  symbol: string
-  priceUSD: string
-  liquidityUSD: string
-  volumeUsd: string
-}
-import _orderBy from 'lodash/orderBy'
 import _find from 'lodash/find'
 import _get from 'lodash/get'
 import { useDerivedSwapInfo, computeSlippageAdjustedAmounts } from '../features/swap/hooks'
 import { computeTradePriceBreakdown } from '../utils/trade'
 import { CurrencyInput } from './app'
+import { usePriceTable } from '../features/compare/hooks'
+import Error from 'next/error'
 
-async function getData(source: ExchangeSource, ethPrice: number, ethPriceOld: number) {
-  const topTokens = await getTopTokens(source, ethPrice, ethPriceOld)
-  return _orderBy(
-    (topTokens || [])
-      .filter((p: any) => p.totalLiquidityUSD > 1)
-      .map((p: any) => ({
-        id: p.id,
-        symbol: p.symbol,
-        volumeUSD: p.tradeVolumeUSD,
-        priceUSD: p.priceUSD,
-        liquidityUSD: p.totalLiquidityUSD,
-      })),
-    ['liquidityUSD'],
-    ['desc'],
-  )
-}
-
-const WETH_ADDRESS = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+const WETH_ADDRESS = _find(tokensList.tokens, { symbol: 'WETH' }).address
 export const TokensList = (): JSX.Element => {
-  const [priceTableUni, setPriceTableUni] = useState<PriceTable[]>([])
-  const [priceTableSushi, setPriceTableSushi] = useState<PriceTable[]>([])
   const [inputTokenAmount, setInputTokenAmount] = useState<string>('1000')
   const [inputTokenAddress, setInputTokenAddress] = useState<string>(WETH_ADDRESS)
 
-  const [ethPriceSushi, ethPriceOldSushi] = useEthPrice(ExchangeSource.SUSHISWAP)
-  const [ethPriceUni, ethPriceOldUni] = useEthPrice(ExchangeSource.UNISWAP)
-  useEffect(() => {
-    if (ethPriceSushi && ethPriceOldSushi && priceTableSushi.length === 0) {
-      getData(ExchangeSource.SUSHISWAP, ethPriceSushi, ethPriceOldSushi).then((res) => setPriceTableSushi(res))
-    }
-  }, [ethPriceSushi, ethPriceOldSushi, priceTableSushi])
+  const [ethPrice, ethPriceOld] = useEthPrice(ExchangeSource.SUSHISWAP)
+  const priceTableResult = usePriceTable(ethPrice, ethPriceOld)
 
-  useEffect(() => {
-    if (ethPriceUni && ethPriceOldUni && priceTableUni.length === 0) {
-      getData(ExchangeSource.UNISWAP, ethPriceUni, ethPriceOldUni).then((res) => setPriceTableUni(res))
+  let uniPriceTable, sushiPriceTable
+  if (!priceTableResult.isError) {
+    const res = priceTableResult.unwrap()
+    uniPriceTable = res.uniPriceTable
+    sushiPriceTable = res.sushiPriceTable
+  }
+  const availableTokensList = useMemo(() => {
+    if (!uniPriceTable || !sushiPriceTable) {
+      return []
     }
-  }, [ethPriceUni, ethPriceOldUni, priceTableUni])
-  const availableTokensList = useMemo(() => priceTableSushi.filter((m) => _find(priceTableUni, { id: m.id }) != null), [
-    priceTableSushi,
-    priceTableUni,
-  ])
+
+    return sushiPriceTable.filter((m) => _find(uniPriceTable, { id: m.id }) != null)
+  }, [uniPriceTable, sushiPriceTable])
+
+  if (priceTableResult.isError) {
+    return <Error statusCode={500} />
+  }
 
   const TableTitleSplit = ({ title }: { title: string }) => (
     <div>
@@ -71,7 +48,7 @@ export const TokensList = (): JSX.Element => {
     </div>
   )
 
-  if (priceTableSushi.length === 0) {
+  if (!sushiPriceTable) {
     return (
       <div className="animate-pulse flex space-x-4 w-full p-12 bg-white">
         <div className="flex-1 space-y-4 py-1">
@@ -132,7 +109,7 @@ export const TokensList = (): JSX.Element => {
           </thead>
           <tbody>
             {availableTokensList.map((sushi, index) => {
-              const uni = _find(priceTableUni, { id: sushi.id })
+              const uni = _find(uniPriceTable, { id: sushi.id })
               if (!uni || !sushi) return <tr key={sushi.id}></tr>
 
               return (
