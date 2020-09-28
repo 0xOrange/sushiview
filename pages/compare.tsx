@@ -1,6 +1,6 @@
 import React from 'react'
 import Container from '../components/container'
-import { TokensList } from '../components/tokensList'
+import { CompareTable } from '../components/compareTable/compareTable'
 import dynamic from 'next/dynamic'
 import { Panel } from '../components/app'
 import { ExchangeSource } from '../constants'
@@ -30,7 +30,7 @@ const Compare = (): JSX.Element => {
       </Container>
       <Container>
         <div className="min-h-screen pb-16">
-          <TokensList />
+          <CompareTable />
         </div>
       </Container>
     </>

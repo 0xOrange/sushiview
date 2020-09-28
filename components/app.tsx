@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import React, { useState } from 'react'
+import React from 'react'
 
 interface IPanel {
   className?: string
@@ -79,58 +79,3 @@ export const Dominance = ({ sushiPercent, className }: IDominance): JSX.Element 
     `}</style>
   </div>
 )
-
-interface ICurrencyInput {
-  className?: string
-  tokenList: {
-    symbol: string
-    address: string
-  }[]
-  amount: string
-  address: string
-  onChange: (value: string, address: string) => any
-}
-export const CurrencyInput = ({ className, tokenList, onChange, address, amount }: ICurrencyInput): JSX.Element => {
-  const [inputTokenAmount, setInputTokenAmount] = useState<string>(amount)
-  const [inputTokenAddress, setInputTokenAddress] = useState<string>(address)
-
-  return (
-    <div className={cn('mb-4 flex', className)}>
-      <div>
-        <label htmlFor="price" className="block text-base leading-5 font-medium text-gray-700">
-          Swap from
-        </label>
-        <div className="mt-1 relative border border-gray-400">
-          <input
-            id="price"
-            className="form-input block w-full h-12 pl-4 pr-12 sm:text-sm sm:leading-5"
-            type="number"
-            value={inputTokenAmount}
-            onChange={(e) => setInputTokenAmount(e.target.value)}
-            placeholder="0.00"
-          />
-          <div className="absolute inset-y-0 right-0 mr-4 flex items-center">
-            <select
-              aria-label="Currency"
-              value={inputTokenAddress}
-              className="form-select h-full py-0 pl-2 pr-7 border-transparent bg-transparent text-gray-700 sm:text-sm sm:leading-5"
-              onChange={(e) => setInputTokenAddress(e.target.value)}
-            >
-              {tokenList.map((t) => (
-                <option key={t.address} value={t.address}>
-                  {t.symbol}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-      <button
-        className="ml-4 mt-6 bg-gray-300 h-12 px-4 rounded-md hover:bg-gray-400"
-        onClick={() => onChange(inputTokenAmount, inputTokenAddress)}
-      >
-        Check
-      </button>
-    </div>
-  )
-}

@@ -72,7 +72,7 @@ const SushiMenu = (): JSX.Element => {
   return (
     <div>
       {!sortedSushiMenu ? (
-        <div className="animate-pulse flex space-x-4 w-full p-12 bg-white">
+        <div className="animate-pulse flex space-x-4 w-full  bg-white">
           <div className="flex-1 space-y-4 py-1">
             <div className="h-4 bg-gray-400 rounded w-3/4"></div>
             <div className="space-y-2">
