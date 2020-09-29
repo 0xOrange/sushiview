@@ -33,7 +33,7 @@ export const CurrencyInput = ({ className, tokenList, onChange, address, amount 
           autoComplete="off"
         />
         <div className="absolute inset-y-0 right-0 flex items-center">
-          <img src={tokenLogo} className="w-4 h-4" />
+          <img src={tokenLogo} className="w-4 h-4 hidden md:block" />
           <select
             aria-label="Currency"
             className="form-select focus:outline-none w-12 mr-3 ml-1 h-full py-0 pr-7 border-transparent bg-transparent text-gray-800 sm:text-sm sm:leading-5"

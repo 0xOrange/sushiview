@@ -16,7 +16,7 @@ import Error from 'next/error'
 enum TableHead {
   PAIR = 'Pair',
   STAKED = 'Staked',
-  UNDERLYING_TOKENS = 'Underlying tokens',
+  UNDERLYING_TOKENS = 'Tokens',
   TVL = 'TVL (24h)',
   YIELD = 'Yield per $1000',
   ROI = 'ROI',
@@ -124,7 +124,7 @@ const SushiMenu = (): JSX.Element => {
                   return (
                     <tr className="border-b" key={index}>
                       <td className="align-middle">
-                        <div className="flex">
+                        <div className="flex w-40">
                           <img
                             className="w-8 h-8 z-10 bg-white rounded-full border-gray-100 border"
                             src={_get(token0Info, 'logoURI', `https://1inch.exchange/assets/tokens/${token0.id}.png`)}
@@ -133,7 +133,7 @@ const SushiMenu = (): JSX.Element => {
                             className="w-8 h-8 -ml-5"
                             src={_get(token1Info, 'logoURI', `https://1inch.exchange/assets/tokens/${token1.id}.png`)}
                           />
-                          <span className="ml-3 mt-1 text-gray-700 text-sm font-semibold w-32 truncate">
+                          <span className="ml-3 mt-1 text-gray-700 text-sm font-semibold truncate">
                             <a
                               href={`https://sushiswap.vision/pair/${menu.pairID}`}
                               className="hover:underline cursor-pointer"
@@ -145,21 +145,21 @@ const SushiMenu = (): JSX.Element => {
                       </td>
                       <td>{formattedNum(menu.liquidityTokenBalance)} LP</td>
                       <td>
-                        <div className="flex items-center text-sm">
+                        <div className="flex items-center text-sm w-32">
                           <div
                             className="w-2 h-2 rounded-full bg-red-100 mr-2"
                             style={{ backgroundColor: _get(token0Info, 'brandColor', '#000000') }}
                           />
                           {formattedNum(token0.reserve)}{' '}
-                          <span className="text-gray-600 ml-1 mt-1 text-xs w-12 truncate">{token0.symbol}</span>
+                          <span className="text-gray-600 ml-1 mt-1 text-xs w-20 truncate">{token0.symbol}</span>
                         </div>
-                        <div className="flex items-center">
+                        <div className="flex items-center w-32">
                           <div
                             className="w-2 h-2 rounded-full bg-red-100 mr-2"
                             style={{ backgroundColor: _get(token1Info, 'brandColor', '#000000') }}
                           />
                           {formattedNum(token1.reserve)}{' '}
-                          <span className="text-gray-600 ml-1 text-xs mt-1 w-12 truncate">{token1.symbol}</span>
+                          <span className="text-gray-600 ml-1 text-xs mt-1 w-20 truncate">{token1.symbol}</span>
                         </div>
                       </td>
                       <td>
@@ -177,7 +177,7 @@ const SushiMenu = (): JSX.Element => {
                           {((menu.totalValueUSD / totalValueUSDAggregate) * 100).toFixed(2)}% of total
                         </div>
                       </td>
-                      <td className="flex mt-3">
+                      <td className="flex mt-3 w-40">
                         <span className="text-2xl">🍣</span>
                         <div className="ml-3">
                           {((1e3 / menu.totalValueUSD) * menu.rewardPerHour * 24).toFixed(2)}
