@@ -120,16 +120,20 @@ const SushiMenu = (): JSX.Element => {
                   const token1Info = _find(tokensList.tokens, {
                     address: token1.id,
                   })
+
                   return (
                     <tr className="border-b" key={index}>
                       <td className="align-middle">
                         <div className="flex">
                           <img
                             className="w-8 h-8 z-10 bg-white rounded-full border-gray-100 border"
-                            src={token0Info.logoURI}
+                            src={_get(token0Info, 'logoURI', `https://1inch.exchange/assets/tokens/${token0.id}.png`)}
                           />
-                          <img className="w-8 h-8 -ml-5" src={token1Info.logoURI} />
-                          <span className="ml-3 mt-1 text-gray-700 text-sm font-semibold">
+                          <img
+                            className="w-8 h-8 -ml-5"
+                            src={_get(token1Info, 'logoURI', `https://1inch.exchange/assets/tokens/${token1.id}.png`)}
+                          />
+                          <span className="ml-3 mt-1 text-gray-700 text-sm font-semibold w-32 truncate">
                             <a
                               href={`https://sushiswap.vision/pair/${menu.pairID}`}
                               className="hover:underline cursor-pointer"
@@ -144,18 +148,18 @@ const SushiMenu = (): JSX.Element => {
                         <div className="flex items-center text-sm">
                           <div
                             className="w-2 h-2 rounded-full bg-red-100 mr-2"
-                            style={{ backgroundColor: token0Info.brandColor }}
+                            style={{ backgroundColor: _get(token0Info, 'brandColor', '#000000') }}
                           />
                           {formattedNum(token0.reserve)}{' '}
-                          <span className="text-gray-600 ml-1 mt-1 text-xs">{token0.symbol}</span>
+                          <span className="text-gray-600 ml-1 mt-1 text-xs w-12 truncate">{token0.symbol}</span>
                         </div>
                         <div className="flex items-center">
                           <div
                             className="w-2 h-2 rounded-full bg-red-100 mr-2"
-                            style={{ backgroundColor: token1Info.brandColor }}
+                            style={{ backgroundColor: _get(token1Info, 'brandColor', '#000000') }}
                           />
                           {formattedNum(token1.reserve)}{' '}
-                          <span className="text-gray-600 ml-1 text-xs mt-1">{token1.symbol}</span>
+                          <span className="text-gray-600 ml-1 text-xs mt-1 w-12 truncate">{token1.symbol}</span>
                         </div>
                       </td>
                       <td>
