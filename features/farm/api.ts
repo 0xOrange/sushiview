@@ -4,11 +4,11 @@ import _find from 'lodash/find'
 import _get from 'lodash/get'
 import { sushiClient, masterChefClient } from '../client'
 import tokensList from '../../tokens.json'
-import { Result, getBlocksFromTimestamps } from '../../utils'
+import { Result, getBlocksFromTimestamps, FetchError } from '../../utils'
 import utc from 'dayjs/plugin/utc'
 import dayjs from 'dayjs'
 import { SUSHI_PER_BLOCK } from '../../constants'
-import { SushiData, ISushiMenu, FetchError } from './farmSlice'
+import { SushiData, ISushiMenu } from './farmSlice'
 dayjs.extend(utc)
 
 const SUSHI_ADDRESS = _find(tokensList.tokens, { symbol: 'SUSHI' }).address

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { FetchError } from '../../utils'
 import JSBI from 'jsbi'
 
 const FARM_SLICE = 'farm'
@@ -10,10 +11,6 @@ export interface FarmState {
   sushiMenuListeners: number
 }
 
-export interface FetchError {
-  code: number
-  message: string
-}
 interface TokenReserve {
   id: string
   symbol: string
@@ -51,12 +48,14 @@ const farmsSlice = createSlice({
   reducers: {
     updateSushiData(state, action: PayloadAction<SushiData>) {
       state.sushiData = action.payload
+      state.fetchError = null
     },
     setFetchError(state, action: PayloadAction<FetchError>) {
       state.fetchError = action.payload
     },
     updateSushiMenu(state, action: PayloadAction<ISushiMenu[]>) {
       state.sushiMenu = action.payload
+      state.fetchError = null
     },
   },
 })

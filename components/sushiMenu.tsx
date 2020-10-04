@@ -145,21 +145,23 @@ const SushiMenu = (): JSX.Element => {
                       </td>
                       <td>{formattedNum(menu.liquidityTokenBalance)} LP</td>
                       <td>
-                        <div className="flex items-center text-sm w-32">
+                        <div className="flex items-center text-sm w-36">
                           <div
-                            className="w-2 h-2 rounded-full bg-red-100 mr-2"
+                            className="w-2 h-2 rounded-full mr-2"
                             style={{ backgroundColor: _get(token0Info, 'brandColor', '#000000') }}
                           />
                           {formattedNum(token0.reserve)}{' '}
-                          <span className="text-gray-600 ml-1 mt-1 text-xs w-20 truncate">{token0.symbol}</span>
+                          <span className="text-gray-600 ml-1 mt-1 text-xs w-10 truncate">{token0.symbol}</span>
                         </div>
                         <div className="flex items-center w-32">
                           <div
-                            className="w-2 h-2 rounded-full bg-red-100 mr-2"
+                            className="w-2 h-2 rounded-full mr-2"
                             style={{ backgroundColor: _get(token1Info, 'brandColor', '#000000') }}
                           />
                           {formattedNum(token1.reserve)}{' '}
-                          <span className="text-gray-600 ml-1 text-xs mt-1 w-20 truncate">{token1.symbol}</span>
+                          <span className="text-gray-600 ml-1 text-xs mt-1 w-10 truncate">
+                            {token1.symbol.replace('WETH', 'ETH')}
+                          </span>
                         </div>
                       </td>
                       <td>

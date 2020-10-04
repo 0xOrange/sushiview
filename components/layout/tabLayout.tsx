@@ -37,6 +37,10 @@ const TabLayout = ({ children }: { children: JSX.Element }): JSX.Element => {
         <ActiveLink href="/compare" className="ml-10">
           Compare
         </ActiveLink>
+
+        <ActiveLink href="/timelock" className="ml-10">
+          Timelock
+        </ActiveLink>
       </div>
 
       <div>{children}</div>

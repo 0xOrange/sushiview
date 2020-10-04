@@ -26,7 +26,7 @@ export const sushiClient = new ApolloClient({
 
 export const masterChefClient = new ApolloClient({
   link: new HttpLink({
-    uri: 'https://api.thegraph.com/subgraphs/id/QmXBvuazDoQUBzh9uZnuqgQUFWRdc58HcGAb95ZP8nf18F',
+    uri: 'https://api.thegraph.com/subgraphs/name/capnorange/sushiswap',
   }),
   cache: new InMemoryCache(),
 })

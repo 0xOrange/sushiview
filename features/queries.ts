@@ -228,3 +228,23 @@ export const PAIR_RESERVE_BY_ID = (ids: string[], block?: number) => {
   `
   return gql(queryString)
 }
+
+export const TIMELOCKS = (limit: number) => gql`
+  query timelocks {
+    timelocks(first: ${limit}, orderBy: createdAt, orderDirection: desc) {
+      id,
+      eta
+      data
+      functionName
+      targetAddress
+      isCancelled
+      isExecuted
+      createdAt
+      expiresAt
+      cancelledAt
+      executedAt
+      createdTx
+      executedTx
+    }
+  }
+`

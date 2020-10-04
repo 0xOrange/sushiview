@@ -33,3 +33,8 @@ export class Result<TSuccess, TError> {
     return this.success
   }
 }
+
+export interface FetchError {
+  code: number
+  message: string
+}

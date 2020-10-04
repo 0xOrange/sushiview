@@ -7,6 +7,7 @@ import multicall from './multicall/reducer'
 import application from './application/reducer'
 import farm from './farm/farmSlice'
 import compare from './compare/compareSlice'
+import timelock from './timelock/timelockSlice'
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     application,
     farm,
     compare,
+    timelock,
   },
   middleware: [...getDefaultMiddleware({ thunk: false })],
 })
