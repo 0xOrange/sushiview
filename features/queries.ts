@@ -245,6 +245,7 @@ export const TIMELOCKS = (limit: number) => gql`
       executedAt
       createdTx
       executedTx
+      cancelledTx
     }
   }
 `
