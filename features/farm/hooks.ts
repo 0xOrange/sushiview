@@ -24,6 +24,7 @@ export const useSushiData = (): Result<SushiData | null, AppState['farm']['fetch
   const dispatch = useDispatch()
   const sushiContractResult = useSingleCallResult(sushiContract, 'totalSupply')
   const sushiBarContractResult = useSingleCallResult(sushiBarContract, 'totalSupply')
+  const barSushiRes = useSingleCallResult(sushiContract, 'balanceOf', [SUSHIBAR_ADDRESS])
   const [ethPrice] = useEthPrice(ExchangeSource.SUSHISWAP)
 
   // TODO: Connect only if no subscribers already
@@ -33,8 +34,9 @@ export const useSushiData = (): Result<SushiData | null, AppState['farm']['fetch
 
       const totalSupply = JSBI.BigInt(_get(sushiContractResult, 'result.0', '-1'))
       const sushiBarTotalSupply = JSBI.BigInt(_get(sushiBarContractResult, 'result.0', '-1'))
-      if (ethPrice > 0 && JSBI.GT(totalSupply, 0)) {
-        ;(await fetchSushiData(totalSupply, sushiBarTotalSupply, ethPrice)).when({
+      const barSushi = JSBI.BigInt(_get(barSushiRes.result, '[0]', '-1'))
+      if (ethPrice > 0 && JSBI.GT(totalSupply, 0) && JSBI.GT(barSushi, 0)) {
+        ;(await fetchSushiData(totalSupply, sushiBarTotalSupply, barSushi, ethPrice)).when({
           success: (result) => dispatch(updateSushiData(result)),
           failure: (e) => dispatch(setFetchError({ code: e.code, message: e.message })),
         })

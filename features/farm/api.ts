@@ -15,6 +15,7 @@ const SUSHI_ADDRESS = _find(tokensList.tokens, { symbol: 'SUSHI' }).address
 export const fetchSushiData = async (
   sushiTotalSupply: JSBI,
   sushiBarTotalSupply: JSBI,
+  sushiStakedBar: JSBI,
   ethPrice: number,
 ): Promise<Result<SushiData, FetchError>> => {
   console.debug('Updating useSushiData: ')
@@ -34,6 +35,7 @@ export const fetchSushiData = async (
         totalSupply: s,
         valueUSD,
         sushiBarTotalSupply: JSBI.divide(sushiBarTotalSupply, JSBI.BigInt(1e18)),
+        sushiStakedBar: JSBI.divide(sushiStakedBar, JSBI.BigInt(1e18)),
       })
     } catch (e) {
       console.error('Error fetching sushi data: ' + JSON.stringify(e))

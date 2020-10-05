@@ -30,6 +30,7 @@ export interface ISushiMenu {
 
 export interface SushiData {
   sushiBarTotalSupply: JSBI
+  sushiStakedBar: JSBI
   totalSupply: JSBI
   valueUSD: number
   marketCap: number

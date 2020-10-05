@@ -59,17 +59,17 @@ const TimelockContainer = ({
   data,
 }: Timelock) => {
   const title = _get(targetNames, targetAddress, targetAddress)
-  let timelockStatus: TimelockStatus, timelockDateText
+  let timelockStatus: TimelockStatus = TimelockStatus.PENDING,
+    timelockDateText = ''
   if (isExecuted) {
     timelockStatus = TimelockStatus.EXECUTED
     timelockDateText = `executed ${dayjs.unix(executedAt).fromNow()}`
   } else if (isCancelled) {
     timelockStatus = TimelockStatus.CANCELLED
     timelockDateText = `cancelled ${dayjs.unix(cancelledAt).fromNow()}`
-  } else if (eta > Date.now() / 1000) {
-    timelockStatus = TimelockStatus.PENDING
+  } else if (eta < Date.now()) {
     timelockDateText = `unlocks in ${dayjs.unix(eta).fromNow()}`
-  } else {
+  } else if (expiresAt > Date.now()) {
     timelockStatus = TimelockStatus.EXPIRED
     timelockDateText = `expired ${dayjs.unix(expiresAt).fromNow(true)} ago`
   }

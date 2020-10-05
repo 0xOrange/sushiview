@@ -13,8 +13,8 @@ interface ISushiOverview {
 
 const SushiOverview = ({ sushiData, sushiValueUSD, fees24H, className }: ISushiOverview): JSX.Element => {
   return (
-    <div className={cn('flex justify-center', className)}>
-      <div className={cn('grid gap-8 grid-cols-1 grid-rows-2 lg:grid-rows-1 lg:grid-cols-2')}>
+    <div className={cn('', className)}>
+      <div className={cn('grid gap-2 grid-cols-1 grid-rows-2 lg:grid-rows-1 lg:grid-cols-2')}>
         <OverviewContainer
           header="Sushi Token"
           emoji="🍣"
@@ -33,7 +33,7 @@ const SushiOverview = ({ sushiData, sushiValueUSD, fees24H, className }: ISushiO
             />
             <OverviewItem
               title="Market cap"
-              value={sushiData ? toK(sushiData.marketCap) : '-'}
+              value={sushiData ? `$${toK(sushiData.marketCap)}` : '-'}
               className="border-gray-300 flex-1 pl-2"
             />
           </div>
@@ -44,8 +44,8 @@ const SushiOverview = ({ sushiData, sushiValueUSD, fees24H, className }: ISushiO
             <OverviewItem
               title="Sushi staked"
               value={
-                sushiData && sushiData.sushiBarTotalSupply
-                  ? formattedNum(parseFloat(sushiData.sushiBarTotalSupply.toString()), false)
+                sushiData && sushiData.sushiStakedBar
+                  ? formattedNum(parseFloat(sushiData.sushiStakedBar.toString()), false)
                   : '-'
               }
               className="flex-1 border-r"
@@ -54,8 +54,8 @@ const SushiOverview = ({ sushiData, sushiValueUSD, fees24H, className }: ISushiO
               className="flex-1 border-r border-gray-300 pl-2 "
               title="Staked value"
               value={
-                sushiData && sushiData.sushiBarTotalSupply
-                  ? toK(parseFloat(sushiData.sushiBarTotalSupply.toString()) * sushiValueUSD)
+                sushiData && sushiData.sushiStakedBar
+                  ? `$${toK(parseFloat(sushiData.sushiStakedBar.toString()) * sushiValueUSD)}`
                   : '-'
               }
             />
